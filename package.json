@@ -1,0 +1,53 @@
+{
+  "name": "entreprise-organiser",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Application de gestion d'entreprise avec authentification, gestion des tâches et des plannings",
+  "main": "index.js",
+  "scripts": {
+    "install:all": "pnpm install",
+    "build": "pnpm --filter frontend build",
+    "start": "concurrently \"pnpm --filter backend start\" \"pnpm --filter frontend dev\"",
+    "start:backend": "pnpm --filter backend dev",
+    "start:frontend": "pnpm --filter frontend dev",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "husky"
+  },
+  "keywords": [
+    "gestion",
+    "entreprise",
+    "tâches",
+    "planification"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@mantine/carousel": "^8.0.1",
+    "@mantine/notifications": "^8.0.1",
+    "bcryptjs": "^3.0.2",
+    "framer-motion": "^12.12.1",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.15.0",
+    "prop-types": "15.7.2",
+    "react-countup": "^6.5.3"
+  },
+  "devDependencies": {
+    "axios": "^1.9.0",
+    "concurrently": "^8.2.2",
+    "eslint": "^9.27.0",
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-prettier": "^5.4.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.0.0",
+    "nodemon": "^3.0.2",
+    "prettier": "^3.5.3",
+    "typescript-eslint": "^8.32.1"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
+  }
+}

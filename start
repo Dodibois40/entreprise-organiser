@@ -1,0 +1,8 @@
+#!/bin/bash
+
+echo "Démarrage rapide..."
+cd /home/dodo/Prog/entreprise-organiser/backend
+npx nodemon src/index.js &
+cd /home/dodo/Prog/entreprise-organiser/frontend
+npm run dev &
+echo "Serveurs démarrés - Frontend: http://localhost:5173" 
