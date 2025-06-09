@@ -2,10 +2,10 @@
   "name": "backend",
   "version": "1.0.0",
   "description": "Backend pour l'application Organiseur d'Entreprise",
-  "main": "src/index.js",
+  "main": "dist/src/main.js",
   "scripts": {
     "start": "node dist/src/main.js",
-    "dev": "ts-node src/main.ts",
+    "dev": "nodemon --exec ts-node src/main.ts",
     "build": "tsc",
     "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",
