@@ -154,6 +154,14 @@ npm run dev
 cd frontend
 npm run dev
 ```
+### Redémarrage avec concurrently
+
+```bash
+./restart-vite.sh
+```
+Ce script nettoie l'environnement et démarre backend et frontend via `concurrently`.
+Appuyez sur Ctrl+C pour arrêter les deux serveurs.
+
 
 ### Accès à l'application
 

@@ -156,59 +156,9 @@ else
   echo -e "${RED}Erreur: Le fichier index.html n'a pas été trouvé dans le répertoire frontend.${NC}"
 fi
 
-# Démarrer le backend en arrière-plan
-echo -e "${GREEN}Démarrage du backend...${NC}"
-(cd backend && npx nodemon src/index.js) > backend.log 2>&1 &
-backend_pid=$!
-echo "Backend démarré avec PID: $backend_pid"
-
-# Attendre 3 secondes pour s'assurer que le backend démarre correctement
-sleep 3
-
-# Vérifier si le backend a démarré correctement
-if ! ps -p $backend_pid > /dev/null; then
-  echo -e "${RED}Le backend n'a pas démarré correctement. Vérifiez backend.log pour plus d'informations.${NC}"
-  tail -n 20 backend.log
-  exit 1
-fi
-
-# Démarrer le frontend en arrière-plan
-echo -e "${GREEN}Démarrage du frontend avec Vite...${NC}"
-(cd frontend && npx vite --force) > frontend.log 2>&1 &
-frontend_pid=$!
-echo "Frontend démarré avec PID: $frontend_pid"
-
-# Attendre 3 secondes pour s'assurer que le frontend démarre correctement
-sleep 3
-
-# Vérifier si le frontend a démarré correctement
-if ! ps -p $frontend_pid > /dev/null; then
-  echo -e "${RED}Le frontend n'a pas démarré correctement. Vérifiez frontend.log pour plus d'informations.${NC}"
-  tail -n 20 frontend.log
-  echo -e "${YELLOW}Tentative de démarrage avec une configuration minimale...${NC}"
-  
-  # Tenter un redémarrage avec une configuration minimale
-  (cd frontend && VITE_DISABLE_OVERLAY=true npx vite --config=vite.minimal.js) > frontend.log 2>&1 &
-  frontend_pid=$!
-  sleep 3
-  
-  if ! ps -p $frontend_pid > /dev/null; then
-    echo -e "${RED}Échec du démarrage même avec une configuration minimale.${NC}"
-    exit 1
-  fi
-fi
-
-echo -e "${GREEN}======================================${NC}"
-echo -e "${GREEN}  Les serveurs sont en cours d'exécution  ${NC}"
-echo -e "${GREEN}  Frontend: http://localhost:3000  ${NC}"
-echo -e "${GREEN}  Backend: http://localhost:5001  ${NC}"
-echo -e "${GREEN}  Logs dans: frontend.log et backend.log  ${NC}"
-echo -e "${GREEN}  Pour arrêter: kill -9 $backend_pid $frontend_pid  ${NC}"
-echo -e "${GREEN}======================================${NC}"
-
 # Créer une configuration minimale de sauvegarde pour Vite
 echo -e "${YELLOW}Création d'une configuration minimale de sauvegarde...${NC}"
-cat > frontend/vite.minimal.js << 'EOL'
+cat > frontend/vite.minimal.js <<'EOL'
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
@@ -222,27 +172,9 @@ export default defineConfig({
 });
 EOL
 
-echo -e "${YELLOW}Pour suivre les logs en temps réel, utilisez:${NC}"
-echo -e "${YELLOW}Backend: tail -f backend.log${NC}"
-echo -e "${YELLOW}Frontend: tail -f frontend.log${NC}"
-
-# Surveiller les processus en arrière-plan
-(
-  while true; do
-    if ! ps -p $backend_pid > /dev/null; then
-      echo -e "${RED}Le processus backend s'est arrêté. Tentative de redémarrage...${NC}" >> restart.log
-      (cd backend && npx nodemon src/index.js) > backend.log 2>&1 &
-      backend_pid=$!
-      echo "Backend redémarré avec PID: $backend_pid" >> restart.log
-    fi
-    
-    if ! ps -p $frontend_pid > /dev/null; then
-      echo -e "${RED}Le processus frontend s'est arrêté. Tentative de redémarrage...${NC}" >> restart.log
-      (cd frontend && npx vite --force) > frontend.log 2>&1 &
-      frontend_pid=$!
-      echo "Frontend redémarré avec PID: $frontend_pid" >> restart.log
-    fi
-    
-    sleep 10
-  done
-) & 
+# Démarrer les serveurs avec concurrently
+echo -e "${GREEN}Démarrage des serveurs via concurrently...${NC}"
+npx concurrently --kill-others --names "backend,frontend" \
+  --prefix-colors "cyan.bold,green.bold" \
+  "cd backend && npx nodemon src/index.js" \
+  "cd frontend && npx vite --force"
