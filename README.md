@@ -268,6 +268,9 @@ npm run test:e2e
 # Démarrage complet
 ./start-all.sh
 
+# Démarrage rapide backend + frontend (à lancer depuis la racine)
+./go.sh
+
 # Recréer les utilisateurs de test
 cd backend && node user-direct.js
 
