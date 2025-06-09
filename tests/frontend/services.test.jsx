@@ -37,7 +37,6 @@ describe('Services Frontend', () => {
       expect(formatted).toMatch(/15\/03\/2024/);
     });
 
-
 test('calculateProgress calcule correctement le pourcentage', () => {
     expect(affairesService.calculateProgress({ statut: 'EN_COURS' })).toBe(50);
     expect(affairesService.calculateProgress({ statut: 'TERMINE' })).toBe(100);
@@ -45,7 +44,6 @@ test('calculateProgress calcule correctement le pourcentage', () => {
     expect(affairesService.calculateProgress({ statut: 'ANNULE' })).toBe(0);
     expect(affairesService.calculateProgress({ statut: 'INCONNU' })).toBe(0);
 });
-
 
     });
 
