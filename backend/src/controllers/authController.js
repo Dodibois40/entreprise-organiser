@@ -140,7 +140,7 @@ exports.login = async (req, res) => {
       }
       const verified = speakeasy.totp.verify({
         secret: decrypt(user.twoFactorSecret),
-        encoding: 'ascii',
+        encoding: 'base32',
         token: twoFactorToken
       });
       if (!verified) {
@@ -500,11 +500,15 @@ exports.enableTwoFactor = async (req, res) => {
     }
 
     const secret = speakeasy.generateSecret();
-    user.twoFactorSecret = encrypt(secret.ascii);
+    // Stocker le secret chiffré en base32 pour une compatibilité maximale
+    user.twoFactorSecret = encrypt(secret.base32);
     user.twoFactorEnabled = true;
     await user.save();
 
-    res.status(200).json({ otpauthUrl: secret.otpauth_url });
+    res.status(200).json({
+      otpauthUrl: secret.otpauth_url,
+      secret: secret.base32
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

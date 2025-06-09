@@ -1,8 +1,9 @@
 const crypto = require('crypto');
+const config = require('../config/config');
 
 const ALGORITHM = 'aes-256-ctr';
 const IV_LENGTH = 16;
-const SECRET = process.env.ENCRYPTION_SECRET || 'entreprise_organiser_encrypt_secret';
+const SECRET = config.encryption.secret;
 
 function encrypt(text) {
   const iv = crypto.randomBytes(IV_LENGTH);
