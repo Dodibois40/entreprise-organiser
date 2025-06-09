@@ -29,6 +29,7 @@ const BdcForm = () => {
   const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [formErrors, setFormErrors] = useState({});
 
   useEffect(() => {
     const fetchData = async () => {
@@ -80,16 +81,33 @@ const BdcForm = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  const validateForm = () => {
+    const newErrors = {};
+    if (!formData.fournisseur.trim()) {
+      newErrors.fournisseur = "Le fournisseur est requis";
+    }
+    if (!formData.affaireId) {
+      newErrors.affaireId = "L'affaire est requise";
+    }
+    if (!formData.categorieAchatId) {
+      newErrors.categorieAchatId = "La catégorie est requise";
+    }
+    if (!formData.montant_ht || parseFloat(formData.montant_ht) <= 0) {
+      newErrors.montant_ht = "Le montant doit être supérieur à 0";
+    }
+    setFormErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!validateForm()) {
+      toast.error("Veuillez corriger les erreurs du formulaire.");
+      return;
+    }
+
     setIsLoading(true);
     setError(null);
-
-    if (!formData.fournisseur || !formData.affaireId || !formData.categorieAchatId || formData.montant_ht <= 0) {
-        toast.error("Veuillez remplir tous les champs obligatoires et vérifier le montant.");
-        setIsLoading(false);
-        return;
-    }
     
     try {
       const dataToSubmit = {
@@ -138,6 +156,9 @@ const BdcForm = () => {
             <div>
               <Label htmlFor="fournisseur">Fournisseur *</Label>
               <Input id="fournisseur" name="fournisseur" value={formData.fournisseur} onChange={handleChange} required placeholder="Nom du fournisseur" />
+              {formErrors.fournisseur && (
+                <p className="text-red-500 text-sm mt-1">{formErrors.fournisseur}</p>
+              )}
             </div>
             
             <div>
@@ -152,6 +173,9 @@ const BdcForm = () => {
                   ))}
                 </SelectContent>
               </Select>
+              {formErrors.affaireId && (
+                <p className="text-red-500 text-sm mt-1">{formErrors.affaireId}</p>
+              )}
             </div>
 
             <div>
@@ -166,6 +190,9 @@ const BdcForm = () => {
                   ))}
                 </SelectContent>
               </Select>
+              {formErrors.categorieAchatId && (
+                <p className="text-red-500 text-sm mt-1">{formErrors.categorieAchatId}</p>
+              )}
             </div>
 
             <div>
@@ -176,6 +203,9 @@ const BdcForm = () => {
             <div>
               <Label htmlFor="montant_ht">Montant HT *</Label>
               <Input id="montant_ht" name="montant_ht" type="number" step="0.01" value={formData.montant_ht} onChange={handleChange} required placeholder="0.00" />
+              {formErrors.montant_ht && (
+                <p className="text-red-500 text-sm mt-1">{formErrors.montant_ht}</p>
+              )}
             </div>
             
             <div>

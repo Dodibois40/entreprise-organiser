@@ -100,6 +100,12 @@ const chantierSchema = new mongoose.Schema({
   }
 }, { timestamps: true });
 
+// Indexation pour optimiser les recherches fréquentes
+chantierSchema.index({ code: 1 }, { unique: true });
+chantierSchema.index({ client: 1 });
+chantierSchema.index({ statut: 1 });
+chantierSchema.index({ dateDebut: 1 });
+
 // Middleware pour calculer les marges avant la sauvegarde
 chantierSchema.pre('save', function(next) {
   // Calcul de la marge prévisionnelle

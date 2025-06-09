@@ -64,8 +64,8 @@ EOL
 fi
 
 # Démarrer le serveur backend
-echo -e "${GREEN}Démarrage du serveur backend sur http://localhost:5001${NC}"
+echo -e "${GREEN}Démarrage du serveur backend sur http://localhost:3001${NC}"
 echo -e "${GREEN}Appuyez sur Ctrl+C pour arrêter le serveur${NC}"
 
-# Lancer le serveur avec nodemon pour un redémarrage automatique en cas de changement
-npx nodemon src/index.js 
+# Utiliser NestJS en mode développement
+npm run dev
