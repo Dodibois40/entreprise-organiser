@@ -11,40 +11,62 @@ echo -e "${BLUE}======================================${NC}"
 echo -e "${BLUE}     DÉMARRAGE DES SERVEURS           ${NC}"
 echo -e "${BLUE}======================================${NC}"
 
-echo "Démarrage des serveurs pour Entreprise Organiser"
+# Vérification de Docker plus robuste
+echo "🛠️  Vérification de Docker..."
+if ! command -v docker &> /dev/null || ! docker info &> /dev/null; then
+  echo "❌ Docker n'est pas installé ou le démon Docker n'est pas en cours d'exécution."
+  exit 1
+fi
+echo "✅ Docker est installé et en cours d'exécution."
 
-# Aller à la racine du projet
-cd $(dirname $0)
+# Détecter la bonne commande Docker Compose
+if docker compose version &> /dev/null; then
+  DOCKER_COMPOSE_CMD="docker compose"
+elif command -v docker-compose &> /dev/null; then
+  DOCKER_COMPOSE_CMD="docker-compose"
+else
+  echo "❌ Docker Compose n'est pas installé. Installe-le puis réessaye."
+  exit 1
+fi
 
-# Arrêter les serveurs déjà en cours
-echo "Arrêt des serveurs existants..."
-pkill -f "node.*backend" || true
-pkill -f "node.*vite" || true
-sleep 2
+echo "🔎 Vérification du conteneur PostgreSQL..."
+if docker ps --format '{{.Names}}' | grep -q '^entreprise_organiser_pg$'; then
+  echo "✅ Le conteneur PostgreSQL est déjà démarré."
+else
+  echo "🚀 Démarrage du conteneur PostgreSQL..."
+  $DOCKER_COMPOSE_CMD up -d
+fi
 
-# Démarrer le backend
-echo "Démarrage du backend..."
-cd backend
-NODE_ENV=development npx nodemon src/index.js &
-BACKEND_PID=$!
-echo "Backend démarré (PID: $BACKEND_PID)"
+echo "🔎 Vérification de PM2..."
+if ! command -v pm2 &> /dev/null; then
+  echo "❌ PM2 n'est pas installé. Installation en cours..."
+  npm install -g pm2
+fi
 
-# Attendre que le backend soit prêt
-sleep 3
+if pm2 list | grep -q "backend"; then
+  echo "🔄 Redémarrage du backend (port 5001)..."
+  pm2 restart backend
+else
+  echo "🚀 Lancement du backend (port 5001)..."
+  cd backend && pm2 start npm --name "backend" -- run start && cd ..
+fi
 
-# Démarrer le frontend
-echo "Démarrage du frontend..."
-cd ../frontend
-npm run dev &
-FRONTEND_PID=$!
-echo "Frontend démarré (PID: $FRONTEND_PID)"
+# Lancer le frontend (Vite) seulement si pas déjà lancé
+if pgrep -f "vite" > /dev/null; then
+  echo "🔄 Le frontend tourne déjà (port 5173)."
+else
+  echo "🚀 Lancement du frontend (port 5173)..."
+  cd frontend
+  npm run dev &
+  cd ..
+fi
 
+echo "✅ Tous les serveurs sont lancés !"
+echo "➡️ Backend : http://localhost:5001"
+echo "➡️ Frontend : http://localhost:5173"
+echo "➡️ PostgreSQL : port 5433 (localhost)"
 echo ""
-echo "Serveurs démarrés :"
-echo "Backend : http://localhost:5001"
-echo "Frontend : http://localhost:5173"
-echo ""
-echo "Appuyez sur Ctrl+C pour arrêter les serveurs"
+echo "📡 Pour suivre les logs du backend : pm2 logs backend"
 
 # Attendre que l'utilisateur arrête le script
 trap "kill $BACKEND_PID $FRONTEND_PID 2>/dev/null; echo 'Serveurs arrêtés.'; exit" INT

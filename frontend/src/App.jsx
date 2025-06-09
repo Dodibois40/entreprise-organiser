@@ -1,9 +1,6 @@
-import { MantineProvider, createTheme, ColorSchemeScript } from '@mantine/core';
-import { Notifications } from '@mantine/notifications';
 import { useEffect, useState } from 'react';
-import '@mantine/core/styles.css';
-import '@mantine/notifications/styles.css';
-import '@mantine/dates/styles.css';
+import { ThemeProvider } from './contexts/ThemeContext';
+import { Toaster } from 'sonner';
 
 // Composant pour détecter les rechargements de page
 const PageReloadIndicator = () => {
@@ -23,50 +20,10 @@ const PageReloadIndicator = () => {
   
   return (
     <div className="page-reload-indicator">
-      Page rechargée à {new Date().toLocaleTimeString()}
+      ✨ Interface modernisée • {new Date().toLocaleTimeString()}
     </div>
   );
 };
-
-// Créer un thème personnalisé
-const theme = createTheme({
-  primaryColor: 'blue',
-  primaryShade: 6,
-  fontFamily: 'Inter, sans-serif',
-  headings: {
-    fontFamily: 'Inter, sans-serif',
-    fontWeight: '600',
-  },
-  defaultRadius: 'md',
-  components: {
-    Button: {
-      defaultProps: {
-        radius: 'md',
-      },
-    },
-    Card: {
-      defaultProps: {
-        shadow: 'sm',
-        radius: 'md',
-        withBorder: true,
-        p: 'lg',
-      },
-    },
-    Notifications: {
-      defaultProps: {
-        position: 'top-right',
-        zIndex: 1000,
-        autoClose: 4000,
-      },
-    },
-    Transition: {
-      defaultProps: {
-        transition: 'fade',
-        duration: 300,
-      },
-    },
-  },
-});
 
 function App({ children }) {
   const [reloadKey, setReloadKey] = useState(Date.now());
@@ -95,16 +52,43 @@ function App({ children }) {
       window.removeEventListener('load', handleLoad);
     };
   }, []);
+
+  // Configuration des toasts
+  const toasterProps = {
+    position: 'top-right',
+    richColors: true,
+    expand: true,
+    gap: 12,
+    toastOptions: {
+      style: {
+        background: 'rgba(255, 255, 255, 0.95)',
+        backdropFilter: 'blur(10px)',
+        border: '1px solid rgba(255, 255, 255, 0.2)',
+        borderRadius: '12px',
+        boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+      },
+    },
+  };
   
   return (
-    <>
-      <ColorSchemeScript defaultColorScheme="light" />
-      <MantineProvider theme={theme} defaultColorScheme="light">
-        <Notifications position="top-right" zIndex={1000} />
-        <PageReloadIndicator key={reloadKey} />
+    <ThemeProvider>
+      {/* Toast System */}
+      <Toaster {...toasterProps} />
+      
+      {/* Page Reload Indicator */}
+      <PageReloadIndicator key={reloadKey} />
+      
+      {/* Main App Content */}
+      <div className="app-container">
         {children}
-      </MantineProvider>
-    </>
+      </div>
+      
+      {/* Background Effects */}
+      <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full blur-3xl animate-pulse-custom"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-pink-400/20 to-orange-400/20 rounded-full blur-3xl animate-pulse-custom delay-1000"></div>
+      </div>
+    </ThemeProvider>
   );
 }
 

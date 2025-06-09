@@ -36,3 +36,44 @@ pnpm-debug.log*
 /**/build
 /out
 /**/out
+
+# Données sensibles
+*.pem
+*.key
+*.cert
+*.env.production
+*.env.staging
+
+# Cache et temporaires
+.cache/
+tmp/
+temp/
+/**/tmp/
+/**/temp/
+
+# Dossiers système
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Archives
+*.zip
+*.tar.gz
+*.rar
+
+# Backups
+*.bak
+*.backup
+*.sql.gz
+
+# Rapports de test
+coverage/
+/**/coverage/
+.nyc_output/
+test-results/
+playwright-report/
+
+# Fichiers de lock temporaires
+package-lock.json.bak
+yarn.lock.bak

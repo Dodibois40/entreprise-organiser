@@ -21,6 +21,27 @@ import Achats from './pages/Achats';
 import BdcList from './pages/achat/BdcList';
 import BdcForm from './pages/achat/BdcForm';
 import BdcDetails from './pages/achat/BdcDetails';
+import PointageCalendarView from './pages/pointage/PointageCalendarView';
+import PointageForm from './pages/pointage/PointageForm';
+import PointageValidation from './pages/pointage/PointageValidation';
+import PointageStats from './pages/pointage/PointageStats';
+import InventaireList from './pages/inventaire/InventaireList';
+import InventaireStats from './pages/inventaire/InventaireStats';
+import ParametresList from './pages/parametres/ParametresList';
+import ParametreForm from './pages/parametres/ParametreForm';
+import ArticlesList from './pages/articles/ArticlesList';
+import ArticleForm from './pages/articles/ArticleForm';
+import ArticleDetails from './pages/articles/ArticleDetails';
+import AnalysesAvancees from './pages/reporting/AnalysesAvancees';
+import Migration from './pages/Migration';
+import Notifications from './pages/Notifications';
+import Pointages from './pages/Pointages';
+import AffairesList from './pages/affaires/AffairesList';
+import AffaireForm from './pages/affaires/AffaireForm';
+import AffaireDetails from './pages/affaires/AffaireDetails';
+import Planification from './pages/Planification';
+import Ressources from './pages/Ressources';
+import TempsPasse from './pages/TempsPasse';
 
 // Composant pour protéger les routes
 const ProtectedRoute = ({ children }) => {
@@ -113,6 +134,14 @@ const Router = () => {
         {/* Routes de chantiers */}
         <Route path="chantiers" element={<Chantiers />} />
         
+        {/* Routes des affaires */}
+        <Route path="affaires">
+          <Route index element={<AffairesList />} />
+          <Route path="nouveau" element={<AffaireForm />} />
+          <Route path=":id" element={<AffaireDetails />} />
+          <Route path=":id/modifier" element={<AffaireForm />} />
+        </Route>
+        
         {/* Routes d'achats et bons de commande */}
         <Route path="achats" element={<Achats />} />
         <Route path="bdc">
@@ -122,8 +151,59 @@ const Router = () => {
           <Route path=":id/modifier" element={<BdcForm />} />
         </Route>
         
+        {/* Routes de Pointages - Page principale avec onglets intégrés */}
+        <Route path="pointages" element={<Pointages />} />
+        
+        {/* Routes individuelles pour les pointages (pour navigation directe si nécessaire) */}
+        <Route path="pointage">
+          <Route path="calendrier" element={<PointageCalendarView />} />
+          <Route path="saisie" element={<PointageForm />} />
+          <Route path="saisie/:id" element={<PointageForm />} />
+          <Route path="validation" element={<PointageValidation />} />
+          <Route path="statistiques" element={<PointageStats />} />
+        </Route>
+        
+        {/* Routes d'inventaire */}
+        <Route path="inventaire">
+          <Route index element={<InventaireList />} />
+          <Route path="stats" element={<InventaireStats />} />
+        </Route>
+        
+        {/* Routes des paramètres */}
+        <Route path="parametres">
+          <Route index element={<ParametresList />} />
+          <Route path="nouveau" element={<ParametreForm />} />
+          <Route path=":id/modifier" element={<ParametreForm />} />
+        </Route>
+        
+        {/* Routes des articles */}
+        <Route path="articles">
+          <Route index element={<ArticlesList />} />
+          <Route path="nouveau" element={<ArticleForm />} />
+          <Route path=":id" element={<ArticleDetails />} />
+          <Route path=":id/modifier" element={<ArticleForm />} />
+        </Route>
+        
+        {/* Routes de reporting avancé */}
+        <Route path="analyses-avancees" element={<AnalysesAvancees />} />
+        
+        {/* Route de migration Excel */}
+        <Route path="migration" element={<Migration />} />
+        
+        {/* Route des notifications */}
+        <Route path="notifications" element={<Notifications />} />
+        
         {/* Profil utilisateur */}
         <Route path="profil" element={<Profile />} />
+        
+        {/* Routes de planification */}
+        <Route path="planification" element={<Planification />} />
+        
+        {/* Routes de ressources */}
+        <Route path="ressources" element={<Ressources />} />
+        
+        {/* Routes de temps passé */}
+        <Route path="temps-passe" element={<TempsPasse />} />
       </Route>
       
       {/* Page 404 */}

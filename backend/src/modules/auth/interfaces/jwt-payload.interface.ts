@@ -1,4 +1,4 @@
-import { RoleEnum } from '../../../generated/prisma';
+import { RoleEnum } from '@prisma/client';
 
 export interface JwtPayload {
   sub: string;

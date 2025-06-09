@@ -2,7 +2,7 @@ import { Injectable, NotFoundException, ConflictException } from '@nestjs/common
 import { PrismaService } from '../../prisma/prisma.service';
 import { CreateBdcDto } from './dto/create-bdc.dto';
 import { UpdateBdcDto } from './dto/update-bdc.dto';
-import { Bdc, Prisma } from '../../generated/prisma';
+import { Bdc, Prisma } from '../../../generated/prisma';
 
 @Injectable()
 export class BdcService {

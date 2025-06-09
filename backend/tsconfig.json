@@ -19,10 +19,11 @@
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
+      "@prisma/*": ["generated/prisma/*"],
       "*": ["node_modules/*"]
     },
     "esModuleInterop": true
   },
-  "include": ["src/**/*", "prisma/**/*"],
+  "include": ["src/**/*", "prisma/**/*", "generated/**/*"],
   "exclude": ["node_modules", "dist"]
 } 

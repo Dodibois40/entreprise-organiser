@@ -6,7 +6,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
 }
 
 datasource db {
@@ -150,11 +149,64 @@ model User {
   
   // Relations
   pointages       Pointage[]
+  mouvementsStock MouvementStock[]
   
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
   @@map("users")
+}
+
+// Modèle Article d'inventaire
+model Article {
+  id              String    @id @default(uuid())
+  code            String    @unique
+  designation     String
+  unite           String    // Ex: "m", "kg", "pièce", "m²"
+  prixUnitaire    Float
+  stockActuel     Float     @default(0)
+  stockMinimum    Float     @default(0)
+  stockMaximum    Float?
+  emplacement     String?
+  fournisseur     String?
+  actif           Boolean   @default(true)
+  
+  // Relations
+  mouvements      MouvementStock[]
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@map("articles")
+}
+
+// Enumération pour les types de mouvement de stock
+enum TypeMouvement {
+  ENTREE
+  SORTIE
+  AJUSTEMENT
+  INVENTAIRE
+}
+
+// Modèle Mouvement de stock
+model MouvementStock {
+  id              String        @id @default(uuid())
+  type            TypeMouvement
+  quantite        Float
+  prixUnitaire    Float?
+  motif           String?
+  reference       String?       // Référence du document (BDC, etc.)
+  
+  // Relations
+  articleId       String
+  article         Article       @relation(fields: [articleId], references: [id])
+  userId          String
+  user            User          @relation(fields: [userId], references: [id])
+  
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@map("mouvements_stock")
 }
 
 // Vues materialisées (à implémenter via des migrations SQL brutes)

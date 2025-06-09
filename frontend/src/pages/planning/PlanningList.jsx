@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { 
   Title, 
-  Button, 
   Group, 
   Table, 
   Badge, 
@@ -48,12 +47,7 @@ import {
 } from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
 import { getAllPlannings, deletePlanning } from '../../services/planningService';
-import { 
-  ActionIconWithRef, 
-  BadgeWithRef, 
-  LinkButton, 
-  TooltipWithRef 
-} from '../../components/shared/ForwardRefComponents';
+import { Button } from '@/components/ui/Button';
 
 // Fonction pour formater les dates
 const formatDate = (dateString) => {
@@ -90,9 +84,15 @@ const StatusBadge = ({ status }) => {
   }
   
   return (
-    <BadgeWithRef color={color} leftSection={icon}>
+    <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+      color === 'blue' ? 'bg-blue-100 text-blue-800' :
+      color === 'green' ? 'bg-green-100 text-green-800' :
+      color === 'yellow' ? 'bg-yellow-100 text-yellow-800' :
+      'bg-gray-100 text-gray-800'
+    }`}>
+      {icon && <span className="mr-1">{icon}</span>}
       {status}
-    </BadgeWithRef>
+    </span>
   );
 };
 
@@ -105,9 +105,9 @@ const PlanningCard = ({ planning, onEdit, onDelete, ...props }) => {
           <Text fw={700} truncate>{planning.titre}</Text>
           <Menu position="bottom-end" withArrow shadow="md">
             <Menu.Target>
-              <ActionIconWithRef variant="subtle" aria-label="Options">
+              <button className="p-1 rounded hover:bg-gray-100" aria-label="Options">
                 <IconDotsVertical size={18} />
-              </ActionIconWithRef>
+              </button>
             </Menu.Target>
             <Menu.Dropdown>
               <Menu.Item leftSection={<IconEye size={14} />} onClick={() => onEdit(planning)}>

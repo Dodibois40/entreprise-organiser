@@ -2,7 +2,7 @@ import { Injectable, NotFoundException, ConflictException } from '@nestjs/common
 import { PrismaService } from '../../prisma/prisma.service';
 import { CreateAffaireDto } from './dto/create-affaire.dto';
 import { UpdateAffaireDto } from './dto/update-affaire.dto';
-import { Affaire, Prisma, StatutAffaire } from '../../generated/prisma';
+import { Affaire, Prisma, StatutAffaire } from '../../../generated/prisma';
 
 @Injectable()
 export class AffairesService {
@@ -10,17 +10,58 @@ export class AffairesService {
 
   async create(createAffaireDto: CreateAffaireDto): Promise<Affaire> {
     try {
+      // Générer automatiquement le numéro si non fourni
+      const numero = createAffaireDto.numero || await this.generateNumeroAffaire();
+      
       return await this.prisma.affaire.create({
-        data: createAffaireDto,
+        data: {
+          ...createAffaireDto,
+          numero,
+        },
       });
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === 'P2002') {
-          throw new ConflictException(`Une affaire avec le numéro ${createAffaireDto.numero} existe déjà`);
+          throw new ConflictException(`Une affaire avec le numéro ${createAffaireDto.numero || 'généré'} existe déjà`);
         }
       }
       throw error;
     }
+  }
+
+  // Méthode pour générer automatiquement un numéro d'affaire
+  private async generateNumeroAffaire(): Promise<string> {
+    const currentYear = new Date().getFullYear().toString().slice(-2); // 2024 -> 24
+    const prefix = `${currentYear}-BOIS`;
+    
+    // Trouver le dernier numéro pour cette année
+    const lastAffaire = await this.prisma.affaire.findFirst({
+      where: {
+        numero: {
+          startsWith: prefix,
+        },
+      },
+      orderBy: {
+        numero: 'desc',
+      },
+    });
+
+    let nextNumber = 1;
+    if (lastAffaire) {
+      // Extraire le numéro séquentiel du dernier numéro (ex: 24-BOIS-003 -> 3)
+      const lastNumParts = lastAffaire.numero.split('-');
+      if (lastNumParts.length === 3) {
+        const lastSeq = parseInt(lastNumParts[2], 10);
+        if (!isNaN(lastSeq)) {
+          nextNumber = lastSeq + 1;
+        }
+      }
+    }
+
+    // Formater avec des zéros en tête (ex: 001, 002, etc.)
+    const formattedNumber = nextNumber.toString().padStart(3, '0');
+    
+    return `${prefix}-${formattedNumber}`;
   }
 
   async findAll(

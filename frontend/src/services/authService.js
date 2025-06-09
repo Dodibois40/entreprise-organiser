@@ -9,12 +9,12 @@ const USER_DATA_KEY = 'user_data';
 const authService = {
   /**
    * Inscrit un nouvel utilisateur
-   * @param {Object} userData - Données d'inscription
+   * @param {Object} userData - Données de l'utilisateur à inscrire
    * @returns {Promise} - Promesse avec les données utilisateur et le token
    */
   register: async (userData) => {
     try {
-      const { data } = await API.post('/api/auth/register', userData);
+      const { data } = await API.post('/auth/register', userData);
       
       // Vérifier que les données contiennent bien un token et un utilisateur
       if (data && data.token) {
@@ -39,16 +39,19 @@ const authService = {
    */
   login: async (credentials) => {
     try {
-      const { data } = await API.post('/api/auth/login', credentials);
+      const { data } = await API.post('/auth/login', credentials);
       
-      // Vérifier que les données contiennent bien un token et un utilisateur
-      if (data && data.token) {
+      // Adapter la réponse du backend qui retourne accessToken au lieu de token
+      const token = data.accessToken || data.token;
+      const user = data.user;
+      
+      if (token && user) {
         // Stocker les informations dans le localStorage
-        localStorage.setItem(AUTH_TOKEN_KEY, data.token);
-        localStorage.setItem(USER_DATA_KEY, JSON.stringify(data.user || {}));
-        return data;
+        localStorage.setItem(AUTH_TOKEN_KEY, token);
+        localStorage.setItem(USER_DATA_KEY, JSON.stringify(user));
+        return { token, user };
       } else {
-        throw new Error('Réponse du serveur invalide: token manquant');
+        throw new Error('Réponse du serveur invalide: token ou utilisateur manquant');
       }
     } catch (error) {
       console.error('Erreur lors de la connexion:', error);
@@ -96,7 +99,7 @@ const authService = {
    */
   getProfile: async () => {
     try {
-      const { data } = await API.get('/api/auth/me');
+      const { data } = await API.get('/auth/profile');
       // Mettre à jour les données stockées
       if (data) {
         localStorage.setItem(USER_DATA_KEY, JSON.stringify(data));
@@ -116,7 +119,7 @@ const authService = {
    */
   updateProfile: async (userData) => {
     try {
-      const { data } = await API.put('/api/auth/me', userData);
+      const { data } = await API.put('/auth/profile', userData);
       // Mettre à jour les données dans le localStorage
       if (data && (data.user || data)) {
         localStorage.setItem(USER_DATA_KEY, JSON.stringify(data.user || data));
@@ -136,7 +139,7 @@ const authService = {
    */
   changePassword: async (passwordData) => {
     try {
-      const { data } = await API.put('/api/auth/password', passwordData);
+      const { data } = await API.put('/auth/password', passwordData);
       return data;
     } catch (error) {
       console.error('Erreur lors du changement de mot de passe:', error);
@@ -152,7 +155,7 @@ const authService = {
    */
   forgotPassword: async (email) => {
     try {
-      const { data } = await API.post('/api/auth/forgot-password', { email });
+      const { data } = await API.post('/auth/forgot-password', { email });
       return data;
     } catch (error) {
       console.error('Erreur lors de la demande de réinitialisation:', error);
@@ -169,7 +172,7 @@ const authService = {
    */
   resetPassword: async (token, password) => {
     try {
-      const { data } = await API.post(`/api/auth/reset-password/${token}`, { password });
+      const { data } = await API.post(`/auth/reset-password/${token}`, { password });
       return data;
     } catch (error) {
       console.error('Erreur lors de la réinitialisation du mot de passe:', error);
@@ -185,7 +188,7 @@ const authService = {
    */
   verifyEmail: async (token) => {
     try {
-      const { data } = await API.get(`/api/auth/verify-email/${token}`);
+      const { data } = await API.get(`/auth/verify-email/${token}`);
       return data;
     } catch (error) {
       console.error('Erreur lors de la vérification de l\'email:', error);
@@ -200,7 +203,7 @@ const authService = {
    */
   resendVerificationEmail: async () => {
     try {
-      const { data } = await API.post('/api/auth/resend-verification');
+      const { data } = await API.post('/auth/resend-verification');
       return data;
     } catch (error) {
       console.error('Erreur lors de l\'envoi de l\'email de vérification:', error);

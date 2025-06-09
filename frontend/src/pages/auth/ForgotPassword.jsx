@@ -1,100 +1,124 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { TextInput, Button, Group, Text, Box, Alert } from '@mantine/core';
-import { useForm } from '@mantine/form';
-import { notifications } from '@mantine/notifications';
 import { IconAt, IconArrowLeft, IconAlertCircle } from '@tabler/icons-react';
+import { toast } from 'sonner';
 import authService from '../../services/authService';
+import { Button } from '@/components/ui/Button';
 
 const ForgotPassword = () => {
   const [loading, setLoading] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
-  
-  // Configuration du formulaire avec validation
-  const form = useForm({
-    initialValues: {
-      email: ''
-    },
-    validate: {
-      email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Email invalide')
+  const [email, setEmail] = useState('');
+  const [errors, setErrors] = useState({});
+
+  const validateForm = () => {
+    const newErrors = {};
+    
+    if (!email) {
+      newErrors.email = 'L\'email est requis';
+    } else if (!/^\S+@\S+$/.test(email)) {
+      newErrors.email = 'Format d\'email invalide';
     }
-  });
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
   
-  // Gestion de la soumission du formulaire
-  const handleSubmit = async (values) => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!validateForm()) return;
+    
     setLoading(true);
     try {
-      await authService.forgotPassword(values.email);
+      await authService.forgotPassword(email);
       
       setEmailSent(true);
       
-      notifications.show({
-        title: 'Email envoyé',
-        message: 'Si votre adresse email est enregistrée, vous recevrez un lien de réinitialisation',
-        color: 'green',
+      toast.success('Email envoyé', {
+        description: 'Si votre adresse email est enregistrée, vous recevrez un lien de réinitialisation'
       });
     } catch (error) {
       console.error('Erreur lors de la demande de réinitialisation:', error);
       
-      notifications.show({
-        title: 'Erreur',
-        message: 'Une erreur est survenue lors de la demande de réinitialisation',
-        color: 'red',
+      toast.error('Erreur', {
+        description: 'Une erreur est survenue lors de la demande de réinitialisation'
       });
     } finally {
       setLoading(false);
     }
   };
+
+  const handleInputChange = (e) => {
+    setEmail(e.target.value);
+    if (errors.email) {
+      setErrors(prev => ({ ...prev, email: '' }));
+    }
+  };
   
   return (
-    <Box>
+    <div>
       {emailSent ? (
-        <Alert 
-          icon={<IconAlertCircle size={16} />} 
-          title="Email envoyé" 
-          color="blue"
-          mb="md"
-        >
-          Si votre adresse email est enregistrée, vous recevrez un lien de réinitialisation.
-          Veuillez vérifier votre boîte de réception et vos courriers indésirables.
-        </Alert>
+        <div className="flex items-start space-x-3 p-4 mb-6 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+          <IconAlertCircle className="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" />
+          <div>
+            <h4 className="font-medium text-blue-900 dark:text-blue-100 mb-1">Email envoyé</h4>
+            <p className="text-sm text-blue-700 dark:text-blue-300">
+              Si votre adresse email est enregistrée, vous recevrez un lien de réinitialisation.
+              Veuillez vérifier votre boîte de réception et vos courriers indésirables.
+            </p>
+          </div>
+        </div>
       ) : (
-        <form onSubmit={form.onSubmit(handleSubmit)}>
-          <Text size="sm" mb="md">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
             Entrez votre adresse email ci-dessous et nous vous enverrons un lien pour réinitialiser votre mot de passe.
-          </Text>
+          </p>
           
-          <TextInput
-            required
-            label="Email"
-            placeholder="votre.email@exemple.com"
-            icon={<IconAt size={16} />}
-            {...form.getInputProps('email')}
-            disabled={loading}
-            mb="md"
-          />
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              Adresse email
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <IconAt className="h-5 w-5 text-gray-400" />
+              </div>
+              <input
+                type="email"
+                value={email}
+                onChange={handleInputChange}
+                className={`modern-input pl-10 ${errors.email ? 'border-red-500' : ''}`}
+                placeholder="votre.email@exemple.com"
+                disabled={loading}
+                required
+              />
+            </div>
+            {errors.email && (
+              <p className="text-sm text-red-600">{errors.email}</p>
+            )}
+          </div>
           
-          <Group position="apart" mt="md">
-            <Button 
-              component={Link} 
-              to="/auth/login" 
-              variant="subtle" 
-              leftIcon={<IconArrowLeft size={16} />}
-              disabled={loading}
+          <div className="flex items-center justify-between pt-4">
+            <Link 
+              to="/auth/login"
+              className="inline-flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 transition-colors"
             >
-              Retour à la connexion
-            </Button>
+              <IconArrowLeft className="w-4 h-4" />
+              <span>Retour à la connexion</span>
+            </Link>
             
             <Button
               type="submit"
               loading={loading}
+              disabled={loading}
+              variant="primary"
             >
-              Envoyer le lien de réinitialisation
+              Envoyer le lien
             </Button>
-          </Group>
+          </div>
         </form>
       )}
-    </Box>
+    </div>
   );
 };
 

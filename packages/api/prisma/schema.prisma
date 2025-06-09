@@ -1,0 +1,106 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generated/prisma-client"
+}
+
+datasource db {
+  provider = "postgresql"
+  // url      = env("DATABASE_URL") // Ligne originale commentée
+  url      = "postgresql://devuser:devpassword@localhost:5433/entreprise_db?schema=public" // Pour Docker Compose
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  nom       String?
+  prenom    String?
+  password  String
+  role      Role     @default(USER)
+  actif     Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  affaires     Affaire[]
+  bdc          Bdc[]
+  pointages    Pointage[]
+  PasswordReset PasswordReset[]
+}
+
+enum Role {
+  USER
+  ADMIN
+  MANAGER
+}
+
+model Affaire {
+  id              Int      @id @default(autoincrement())
+  numeroAffaire   String   @unique
+  nomChantier     String
+  client          String?
+  statut          String   @default("En cours")
+  montantTotalHT  Float?
+  margeEstimee    Float?
+  dateCreation    DateTime @default(now())
+  dateDebut       DateTime?
+  dateFinEstimee  DateTime?
+  dateFinReelle   DateTime?
+  creePar         User     @relation(fields: [creeParId], references: [id])
+  creeParId       Int
+  bdc             Bdc[]
+  pointages       Pointage[]
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Bdc { // Bon de Commande
+  id             Int      @id @default(autoincrement())
+  numeroBdc      String   @unique
+  affaire        Affaire  @relation(fields: [affaireId], references: [id])
+  affaireId      Int
+  fournisseur    String?
+  description    String?
+  montantHT      Float?
+  statut         String   @default("Commandé")
+  dateCommande   DateTime @default(now())
+  dateLivraisonEstimee DateTime?
+  dateLivraisonReelle  DateTime?
+  creePar        User     @relation(fields: [creeParId], references: [id])
+  creeParId      Int
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Pointage {
+  id          Int      @id @default(autoincrement())
+  utilisateur User     @relation(fields: [utilisateurId], references: [id])
+  utilisateurId Int
+  affaire     Affaire? @relation(fields: [affaireId], references: [id])
+  affaireId   Int?
+  date        DateTime
+  heures      Float
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model PasswordReset {
+  id        String   @id @default(cuid())
+  email     String
+  token     String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+// model User {
+//   id    Int     @id @default(autoincrement())
+//   email String  @unique
+//   name  String?
+// }

@@ -1,45 +1,66 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const config = require('../config/config');
+const DEFAULT_SECRET = 'default_secret_key_for_dev_only_please_change_in_production';
+const JWT_SECRET = process.env.JWT_SECRET || DEFAULT_SECRET;
 
 /**
- * Middleware d'authentification
- * Vérifie si l'utilisateur est authentifié via le JWT dans les en-têtes
+ * Middleware pour vérifier l'authentification JWT
  */
-exports.protect = async (req, res, next) => {
+exports.authenticateJWT = (req, res, next) => {
   try {
-    // Récupérer le token depuis l'en-tête Authorization
     const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({ message: 'Accès non autorisé, token manquant' });
+
+    if (!authHeader) {
+      return res.status(401).json({ message: 'Accès non autorisé. Token manquant.' });
     }
 
+    // Format du header: "Bearer TOKEN"
     const token = authHeader.split(' ')[1];
+    
     if (!token) {
-      return res.status(401).json({ message: 'Accès non autorisé, token invalide' });
+      return res.status(401).json({ message: 'Format de token invalide.' });
     }
-    
-    // Vérifier et décoder le token
-    const decoded = jwt.verify(token, config.jwt.secret);
-    
-    // Vérifier que l'utilisateur existe toujours
-    const user = await User.findById(decoded.id);
-    if (!user) {
-      return res.status(401).json({ message: 'Utilisateur non trouvé' });
-    }
-    
-    // Vérifier si l'utilisateur est toujours actif
-    if (!user.actif) {
-      return res.status(403).json({ message: 'Compte désactivé, contactez un administrateur' });
-    }
-    
-    // Ajouter l'utilisateur à l'objet requête
-    req.user = user;
-    next();
+
+    // Vérification du token avec une gestion d'erreur améliorée
+    jwt.verify(token, JWT_SECRET, (err, user) => {
+      if (err) {
+        console.error('Erreur d\'authentification:', err);
+        return res.status(401).json({ message: 'Token invalide ou expiré.' });
+      }
+      req.user = user;
+      next();
+    });
   } catch (error) {
     console.error('Erreur d\'authentification:', error);
-    res.status(401).json({ message: 'Token invalide ou expiré' });
+    return res.status(401).json({ message: 'Erreur d\'authentification.' });
   }
+};
+
+/**
+ * Middleware pour vérifier les rôles utilisateur
+ */
+exports.authorizeRoles = (roles) => {
+  return (req, res, next) => {
+    try {
+      // Assurez-vous que req.user existe (middleware authenticateJWT doit être utilisé avant)
+      if (!req.user) {
+        return res.status(401).json({ message: 'Authentification requise.' });
+      }
+
+      // Vérifier si l'utilisateur a un des rôles autorisés
+      if (!req.user.role || !roles.includes(req.user.role.toLowerCase())) {
+        return res.status(403).json({ 
+          message: 'Accès refusé. Vous n\'avez pas les droits nécessaires.' 
+        });
+      }
+
+      next();
+    } catch (error) {
+      console.error('Erreur d\'autorisation:', error);
+      return res.status(500).json({ message: 'Erreur serveur lors de la vérification des droits.' });
+    }
+  };
 };
 
 /**

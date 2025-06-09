@@ -25,7 +25,7 @@ import { CreateAffaireDto } from './dto/create-affaire.dto';
 import { UpdateAffaireDto } from './dto/update-affaire.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
-import { RoleEnum, StatutAffaire } from '../../generated/prisma';
+import { RoleEnum, StatutAffaire } from '../../../generated/prisma';
 
 @ApiTags('affaires')
 @Controller('affaires')

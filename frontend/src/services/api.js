@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { notifications } from '@mantine/notifications';
 
-// Définir l'URL de base de l'API
-const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:5001';
+// Définir l'URL de base de l'API - Pointer directement vers le backend
+const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 
 // Cache simple pour les requêtes GET
 const cache = new Map();
@@ -42,6 +42,9 @@ API.interceptors.request.use(
       config.headers.Authorization = `Bearer ${token}`;
     }
 
+    // Log pour debug - sera retiré plus tard
+    console.log('API Request:', config.method?.toUpperCase(), config.url, config.baseURL);
+
     // Vérifier le cache pour les requêtes GET
     if (config.method === 'get') {
       const cachedData = getCachedData(config.url);
@@ -64,6 +67,9 @@ API.interceptors.request.use(
 // Ajouter l'intercepteur pour les réponses
 API.interceptors.response.use(
   (response) => {
+    // Log pour debug - sera retiré plus tard
+    console.log('API Response:', response.status, response.config.url);
+    
     // Mettre en cache les réponses GET
     if (response.config.method === 'get') {
       setCachedData(response.config.url, response.data);
@@ -75,6 +81,9 @@ API.interceptors.response.use(
     if (error.__CACHE_HIT__) {
       return Promise.resolve({ data: error.data });
     }
+
+    // Log pour debug
+    console.error('API Error:', error.response?.status, error.config?.url, error.message);
 
     // Gérer les erreurs de timeout
     if (error.code === 'ECONNABORTED') {

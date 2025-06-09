@@ -132,6 +132,11 @@
   - [ ] Sélecteur de période et filtres
   - [ ] Graphiques de visualisation
   - [ ] Export CSV/XLSX et PDF
+- [ ] Module Inventaire et gestion des stocks
+  - [ ] Liste des articles avec filtres et recherche
+  - [ ] Gestion des entrées/sorties de stock
+  - [ ] Alertes de stock minimum
+  - [ ] Statistiques et valorisation du stock
 
 ### 3.3 Composants UI avancés
 - [ ] DataTable pour les listes (shadcn/ui)

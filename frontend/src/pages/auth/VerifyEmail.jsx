@@ -1,19 +1,19 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { Button, Group, Text, Alert, Loader, Box } from '@mantine/core';
-import { notifications } from '@mantine/notifications';
-import { IconArrowLeft, IconCheck } from '@tabler/icons-react';
+import { useParams, useNavigate, Link } from 'react-router-dom';
+import { IconCheck, IconX, IconLoader } from '@tabler/icons-react';
+import { toast } from 'sonner';
 import authService from '../../services/authService';
+import { Button } from '@/components/ui/Button';
 
 const VerifyEmail = () => {
   const { token } = useParams();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [verified, setVerified] = useState(false);
   const [error, setError] = useState(null);
   
-  // Vérifier le token au chargement
   useEffect(() => {
-    const verifyEmailToken = async () => {
+    const verifyEmail = async () => {
       if (!token) {
         setError('Token de vérification manquant');
         setLoading(false);
@@ -24,88 +24,91 @@ const VerifyEmail = () => {
         await authService.verifyEmail(token);
         setVerified(true);
         
-        notifications.show({
-          title: 'Succès',
-          message: 'Votre adresse email a été vérifiée avec succès',
-          color: 'green',
+        toast.success('Email vérifié', {
+          description: 'Votre adresse email a été vérifiée avec succès'
         });
       } catch (error) {
         console.error('Erreur lors de la vérification de l\'email:', error);
-        setError(error.message || 'Une erreur est survenue lors de la vérification de l\'email');
+        setError(error.message || 'Erreur lors de la vérification de l\'email');
         
-        notifications.show({
-          title: 'Erreur',
-          message: error.message || 'Une erreur est survenue lors de la vérification de l\'email',
-          color: 'red',
+        toast.error('Erreur de vérification', {
+          description: error.message || 'Une erreur est survenue lors de la vérification'
         });
       } finally {
         setLoading(false);
       }
     };
     
-    verifyEmailToken();
+    verifyEmail();
   }, [token]);
   
-  // Affichage pendant le chargement
+  const handleContinue = () => {
+    navigate('/auth/login');
+  };
+  
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '2rem' }}>
-        <Loader size="lg" mb="md" />
-        <Text>Vérification de votre adresse email en cours...</Text>
-      </Box>
+      <div className="text-center py-8">
+        <div className="flex items-center justify-center mb-4">
+          <IconLoader className="w-8 h-8 text-blue-500 animate-spin" />
+        </div>
+        <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+          Vérification en cours...
+        </h3>
+        <p className="text-sm text-gray-600 dark:text-gray-400">
+          Veuillez patienter pendant que nous vérifions votre adresse email.
+        </p>
+      </div>
     );
   }
   
-  // Affichage en cas d'erreur
-  if (error) {
+  if (verified) {
     return (
-      <Alert 
-        title="Erreur lors de la vérification" 
-        color="red"
-        mb="md"
-      >
-        {error === 'Token invalide ou expiré' ? (
-          <>
-            <Text mb="md">Le lien de vérification est invalide ou a expiré.</Text>
-            <Text mb="md">Veuillez vous connecter pour demander un nouveau lien de vérification.</Text>
-          </>
-        ) : (
-          <Text mb="md">{error}</Text>
-        )}
-        
-        <Group position="center" mt="xl">
-          <Button 
-            component={Link} 
-            to="/auth/login"
-            variant="light"
-          >
-            Aller à la page de connexion
-          </Button>
-        </Group>
-      </Alert>
+      <div className="text-center py-8">
+        <div className="flex items-center justify-center mb-4">
+          <div className="w-16 h-16 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center">
+            <IconCheck className="w-8 h-8 text-green-600 dark:text-green-400" />
+          </div>
+        </div>
+        <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+          Email vérifié avec succès !
+        </h3>
+        <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
+          Votre adresse email a été vérifiée. Vous pouvez maintenant vous connecter.
+        </p>
+        <Button onClick={handleContinue} variant="primary">
+          Se connecter
+        </Button>
+      </div>
     );
   }
   
-  // Affichage en cas de succès
   return (
-    <Alert 
-      icon={<IconCheck size={16} />}
-      title="Adresse email vérifiée" 
-      color="green"
-      mb="md"
-    >
-      <Text mb="md">Votre adresse email a été vérifiée avec succès. Vous pouvez maintenant vous connecter à votre compte.</Text>
-      
-      <Group position="center" mt="xl">
-        <Button 
-          component={Link} 
-          to="/auth/login" 
-          leftIcon={<IconArrowLeft size={16} />}
-        >
-          Aller à la page de connexion
-        </Button>
-      </Group>
-    </Alert>
+    <div className="text-center py-8">
+      <div className="flex items-center justify-center mb-4">
+        <div className="w-16 h-16 bg-red-100 dark:bg-red-900 rounded-full flex items-center justify-center">
+          <IconX className="w-8 h-8 text-red-600 dark:text-red-400" />
+        </div>
+      </div>
+      <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+        Erreur de vérification
+      </h3>
+      <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
+        {error || 'Une erreur est survenue lors de la vérification de votre email.'}
+      </p>
+      <div className="space-x-4">
+        <Link to="/auth/login">
+          <Button variant="secondary">
+            Retour à la connexion
+          </Button>
+        </Link>
+        <Link to="/auth/register">
+          <Button variant="primary">
+            S'inscrire à nouveau
+          </Button>
+        </Link>
+      </div>
+    </div>
   );
 };
 

@@ -1,18 +1,14 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, IsNumber, IsOptional, IsDate, Min, Matches } from 'class-validator';
+import { IsNotEmpty, IsString, IsNumber, IsOptional, IsDate, Min, Matches, ValidateIf } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class CreateAffaireDto {
-  @ApiProperty({
-    description: 'Numéro unique de l\'affaire',
+  @ApiPropertyOptional({
+    description: 'Numéro unique de l\'affaire (généré automatiquement si non fourni)',
     example: '24-BOIS-003',
   })
-  @IsString()
-  @IsNotEmpty()
-  @Matches(/^\d{2}-[A-Z]{3,4}-\d{3}$/, {
-    message: 'Le numéro doit être au format XX-XXX-XXX (ex: 24-BOIS-003)',
-  })
-  numero: string;
+  @IsOptional()
+  numero?: string;
 
   @ApiProperty({
     description: 'Libellé de l\'affaire',

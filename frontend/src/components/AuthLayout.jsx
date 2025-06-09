@@ -1,46 +1,26 @@
 import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
-import { Container, Paper, Title, Text, Center, Image, Box, Group } from '@mantine/core';
 
 const AuthLayout = () => {
   return (
-    <Box 
-      sx={(theme) => ({
-        backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0],
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: theme.spacing.md,
-      })}
-    >
-      <Container size="sm">
-        <Paper 
-          radius="md" 
-          p="xl" 
-          withBorder
-          sx={(theme) => ({
-            backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
-          })}
-        >
-          <Group mb={30} position="center">
-            {/* Logo ou icône de l'application */}
-            <Center>
-              <Title order={1} align="center" mb="xs">
-                Entreprise Organiser
-              </Title>
-            </Center>
-          </Group>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center p-4">
+      <div className="w-full max-w-md">
+        <div className="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-8 border border-gray-200 dark:border-gray-700">
+          <div className="mb-8 text-center">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+              Entreprise Organiser
+            </h1>
+          </div>
           
           {/* Contenu dynamique des pages d'authentification */}
           <Outlet />
           
-          <Text color="dimmed" size="sm" align="center" mt="lg">
+          <p className="text-sm text-gray-500 dark:text-gray-400 text-center mt-6">
             © {new Date().getFullYear()} Entreprise Organiser - Tous droits réservés
-          </Text>
-        </Paper>
-      </Container>
-    </Box>
+          </p>
+        </div>
+      </div>
+    </div>
   );
 };
 

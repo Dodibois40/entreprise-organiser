@@ -26,7 +26,7 @@ import { CreateBdcDto } from './dto/create-bdc.dto';
 import { UpdateBdcDto } from './dto/update-bdc.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
-import { RoleEnum } from '../../generated/prisma';
+import { RoleEnum } from '../../../generated/prisma';
 import { Type } from 'class-transformer';
 import { IsDate } from 'class-validator';
 

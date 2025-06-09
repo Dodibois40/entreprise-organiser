@@ -1,47 +1,15 @@
-// Import des correctifs de transitions (utilise le shim .jsx qui est plus fiable)
-import './utils/transitionShim.jsx';
-import './utils/mantineTransitionFix.jsx';
-
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import { BrowserRouter } from 'react-router-dom'
-import Router from './router'
-import App from './App.jsx'
-import { AuthProvider } from './contexts/AuthContext'
-import './index.css'
-import '@mantine/dates/styles.css'
-import '@mantine/core/styles.css'
-import '@mantine/notifications/styles.css'
-import { MantineProvider, createTheme } from '@mantine/core'
-import { Notifications } from '@mantine/notifications'
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { BrowserRouter } from 'react-router-dom';
+import App from './App';
+import Router from './router'; // Assurez-vous que ce chemin est correct
+import { AuthProvider } from './contexts/AuthContext'; // Assurez-vous que ce chemin est correct
+import './index.css';
 
 // Importer les correctifs avant tout autre code
-import './utils/PropTypesFix';
+import './utils/PropTypesFix'; // Ajouté
 
-// Créer un thème personnalisé
-const theme = createTheme({
-  primaryColor: 'blue',
-  defaultRadius: 'sm',
-  fontFamily: 'Open Sans, sans-serif',
-  headings: {
-    fontFamily: 'Roboto, sans-serif',
-  },
-  components: {
-    Button: {
-      defaultProps: {
-        radius: 'md',
-      },
-    },
-    // Configuration des transitions pour éviter les erreurs
-    Transition: {
-      defaultProps: {
-        transition: 'fade',
-        duration: 300,
-        timingFunction: 'ease',
-      },
-    },
-  },
-})
+
 
 // Patch React Router pour éviter les avertissements futurs
 const originalConsoleWarn = console.warn;
@@ -79,7 +47,7 @@ window.addEventListener('error', (event) => {
       event.message.includes('PropTypes') || 
       event.message.includes('Transition') ||
       event.message.includes('apply'))) {
-    console.warn('Erreur interceptée:', event.message);
+    // console.warn('Erreur interceptée:', event.message); // Optionnel: loguer discrètement
     event.preventDefault(); // Empêcher l'erreur de s'afficher
     return true;
   }
@@ -87,13 +55,12 @@ window.addEventListener('error', (event) => {
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <MantineProvider theme={theme} defaultColorScheme="light">
-      <Notifications position="top-right" zIndex={1000} />
-      <BrowserRouter>
-        <AuthProvider>
+    <BrowserRouter>
+      <AuthProvider>
+        <App>
           <Router />
-        </AuthProvider>
-      </BrowserRouter>
-    </MantineProvider>
+        </App>
+      </AuthProvider>
+    </BrowserRouter>
   </React.StrictMode>
-)
+);
