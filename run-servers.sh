@@ -39,11 +39,11 @@ FRONTEND_PID=$!
 cd ..
 
 echo -e "${GREEN}✅ Serveurs démarrés avec succès!${NC}"
-echo -e "Backend: http://localhost:5001"
+echo -e "Backend: http://localhost:3001"
 echo -e "Frontend: http://localhost:5173"
 echo -e "Logs backend: pm2 logs backend"
 
 # Attendre que l'utilisateur arrête le script
 echo -e "${YELLOW}Appuyez sur Ctrl+C pour arrêter les serveurs...${NC}"
 trap "kill $FRONTEND_PID 2>/dev/null; pm2 delete backend; echo -e '${RED}Serveurs arrêtés.${NC}'; exit" INT
-wait 
+wait
