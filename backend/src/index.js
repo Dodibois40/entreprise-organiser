@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const config = require('./config/config');
+const { apiLimiter, authLimiter } = require('./middleware/rateLimiter');
 
 // Routes
 const userRoutes = require('./routes/userRoutes');
@@ -17,6 +18,7 @@ const app = express();
 app.use(cors(config.cors));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use('/api', apiLimiter);
 
 // Routes principales
 app.get('/', (req, res) => {
@@ -25,7 +27,7 @@ app.get('/', (req, res) => {
 
 // Routes d'API
 app.use('/api/users', userRoutes);
-app.use('/api/auth', authRoutes);
+app.use('/api/auth', authLimiter, authRoutes);
 app.use('/api/tasks', taskRoutes);
 app.use('/api/plannings', planningRoutes);
 app.use('/api/chantiers', chantierRoutes);

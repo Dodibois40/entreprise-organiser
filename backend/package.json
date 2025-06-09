@@ -46,6 +46,8 @@
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "prisma": "^6.8.2",
+    "speakeasy": "^2.0.0",
+    "express-rate-limit": "^6.7.0",
     "typescript": "^5.8.3"
   },
   "devDependencies": {

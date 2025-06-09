@@ -58,7 +58,16 @@ const userSchema = new mongoose.Schema({
   emailVerificationExpires: Date,
   // Champs pour la réinitialisation du mot de passe
   resetPasswordToken: String,
-  resetPasswordExpires: Date
+  resetPasswordExpires: Date,
+  // Authentification à deux facteurs
+  twoFactorEnabled: {
+    type: Boolean,
+    default: false
+  },
+  twoFactorSecret: String,
+  // Refresh token
+  refreshTokenHash: String,
+  refreshTokenExpires: Date
 }, {
   timestamps: true
 });

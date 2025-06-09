@@ -24,6 +24,16 @@ const config = {
     secret: process.env.JWT_SECRET || 'entreprise_organiser_secret_key_2025',
     expiresIn: process.env.JWT_EXPIRE || '1d'
   },
+
+  // Refresh Token
+  refreshToken: {
+    secret: process.env.REFRESH_TOKEN_SECRET || 'entreprise_organiser_refresh_secret',
+    expiresIn: process.env.REFRESH_TOKEN_EXPIRE || '7d'
+  },
+
+  encryption: {
+    secret: process.env.ENCRYPTION_SECRET || 'entreprise_organiser_encrypt_secret'
+  },
   
   // Cors
   cors: {

@@ -3,6 +3,10 @@ const jwt = require('jsonwebtoken');
 const config = require('../config/config');
 const emailService = require('../services/emailService');
 const crypto = require('crypto');
+const speakeasy = require('speakeasy');
+const { encrypt, decrypt } = require('../utils/encryption');
+
+const REFRESH_EXPIRE_MS = 7 * 24 * 60 * 60 * 1000; // 7 jours
 
 // Génération du token JWT
 const generateToken = (id, rememberMe = false) => {
@@ -10,6 +14,11 @@ const generateToken = (id, rememberMe = false) => {
   const expiresIn = rememberMe ? '30d' : config.jwt.expiresIn;
   
   return jwt.sign({ id }, config.jwt.secret, { expiresIn });
+};
+
+// Génération du refresh token
+const generateRefreshToken = () => {
+  return crypto.randomBytes(40).toString('hex');
 };
 
 // Inscription d'un nouvel utilisateur
@@ -47,8 +56,12 @@ exports.register = async (req, res) => {
     try {
       await emailService.sendEmailVerification(user, verificationUrl);
       
-      // Générer un token JWT pour l'authentification
+      // Générer un token JWT et un refresh token pour l'authentification
       const token = generateToken(user._id);
+      const refreshToken = generateRefreshToken();
+      user.refreshTokenHash = crypto.createHash('sha256').update(refreshToken).digest('hex');
+      user.refreshTokenExpires = Date.now() + REFRESH_EXPIRE_MS;
+      await user.save();
 
       // Réponse avec l'utilisateur sans le mot de passe
       res.status(201).json({
@@ -62,6 +75,7 @@ exports.register = async (req, res) => {
           emailVerified: user.emailVerified
         },
         token,
+        refreshToken,
         message: 'Inscription réussie. Un email de vérification a été envoyé à votre adresse email.'
       });
     } catch (error) {
@@ -73,22 +87,27 @@ exports.register = async (req, res) => {
       console.error('Erreur d\'envoi d\'email de vérification:', error);
       
       // Générer un token JWT pour l'authentification
-    const token = generateToken(user._id);
+      const token = generateToken(user._id);
+      const refreshToken = generateRefreshToken();
+      user.refreshTokenHash = crypto.createHash('sha256').update(refreshToken).digest('hex');
+      user.refreshTokenExpires = Date.now() + REFRESH_EXPIRE_MS;
+      await user.save();
 
-    // Réponse avec l'utilisateur sans le mot de passe
-    res.status(201).json({
-      user: {
-        _id: user._id,
-        nom: user.nom,
-        prenom: user.prenom,
-        email: user.email,
-        poste: user.poste,
+      // Réponse avec l'utilisateur sans le mot de passe
+      res.status(201).json({
+        user: {
+          _id: user._id,
+          nom: user.nom,
+          prenom: user.prenom,
+          email: user.email,
+          poste: user.poste,
           role: user.role,
           emailVerified: user.emailVerified
-      },
+        },
         token,
+        refreshToken,
         message: 'Inscription réussie, mais une erreur est survenue lors de l\'envoi de l\'email de vérification.'
-    });
+      });
     }
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -98,7 +117,7 @@ exports.register = async (req, res) => {
 // Connexion d'un utilisateur
 exports.login = async (req, res) => {
   try {
-    const { email, password, rememberMe = false } = req.body;
+    const { email, password, rememberMe = false, twoFactorToken } = req.body;
 
     // Vérifier si l'utilisateur existe
     const user = await User.findOne({ email, actif: true }).select('+password');
@@ -114,12 +133,31 @@ exports.login = async (req, res) => {
       return res.status(401).json({ message: 'Email ou mot de passe incorrect' });
     }
 
+    // Vérifier le code 2FA si activé
+    if (user.twoFactorEnabled) {
+      if (!twoFactorToken) {
+        return res.status(401).json({ message: 'Code 2FA requis' });
+      }
+      const verified = speakeasy.totp.verify({
+        secret: decrypt(user.twoFactorSecret),
+        encoding: 'ascii',
+        token: twoFactorToken
+      });
+      if (!verified) {
+        return res.status(401).json({ message: 'Code 2FA invalide' });
+      }
+    }
+
     // Mettre à jour la date de dernière connexion
     user.derniereConnexion = Date.now();
     await user.save();
 
-    // Générer un token avec ou sans option "se souvenir de moi"
+    // Générer un token avec ou sans option "se souvenir de moi" et un refresh token
     const token = generateToken(user._id, rememberMe);
+    const refreshToken = generateRefreshToken();
+    user.refreshTokenHash = crypto.createHash('sha256').update(refreshToken).digest('hex');
+    user.refreshTokenExpires = Date.now() + REFRESH_EXPIRE_MS;
+    await user.save();
 
     // Réponse avec l'utilisateur sans le mot de passe
     res.status(200).json({
@@ -132,7 +170,8 @@ exports.login = async (req, res) => {
         role: user.role,
         emailVerified: user.emailVerified
       },
-      token
+      token,
+      refreshToken
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -420,6 +459,52 @@ exports.resendVerificationEmail = async (req, res) => {
         message: 'Une erreur est survenue lors de l\'envoi de l\'email de vérification'
       });
     }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Rafraîchir le token JWT
+exports.refreshToken = async (req, res) => {
+  try {
+    const { refreshToken } = req.body;
+    if (!refreshToken) {
+      return res.status(400).json({ message: 'Refresh token manquant' });
+    }
+
+    const hashed = crypto.createHash('sha256').update(refreshToken).digest('hex');
+    const user = await User.findOne({ refreshTokenHash: hashed, refreshTokenExpires: { $gt: Date.now() } });
+
+    if (!user) {
+      return res.status(401).json({ message: 'Refresh token invalide' });
+    }
+
+    const token = generateToken(user._id);
+    const newRefreshToken = generateRefreshToken();
+    user.refreshTokenHash = crypto.createHash('sha256').update(newRefreshToken).digest('hex');
+    user.refreshTokenExpires = Date.now() + REFRESH_EXPIRE_MS;
+    await user.save();
+
+    res.status(200).json({ token, refreshToken: newRefreshToken });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Activer l'authentification à deux facteurs
+exports.enableTwoFactor = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ message: 'Utilisateur non trouvé' });
+    }
+
+    const secret = speakeasy.generateSecret();
+    user.twoFactorSecret = encrypt(secret.ascii);
+    user.twoFactorEnabled = true;
+    await user.save();
+
+    res.status(200).json({ otpauthUrl: secret.otpauth_url });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
