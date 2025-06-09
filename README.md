@@ -29,7 +29,7 @@ Une application web SaaS complète pour la gestion d'entreprises de menuiserie, 
 - **Ressources** : Gestion des équipements et matériaux
 - **Analyses Avancées** : Rapports et graphiques détaillés
 - **Migration Excel** : Import/export de données Excel
-- **Notifications** : System d'alertes intelligent
+- **Notifications** : Système d'alertes intelligent
 
 ### 🔐 Système d'Authentification
 
