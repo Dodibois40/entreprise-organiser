@@ -37,11 +37,16 @@ describe('Services Frontend', () => {
       expect(formatted).toMatch(/15\/03\/2024/);
     });
 
-    test('calculerProgression calcule correctement le pourcentage', () => {
-      expect(affairesService.calculateProgress({ statut: 'EN_COURS' })).toBe(50);
-      expect(affairesService.calculateProgress({ statut: 'TERMINE' })).toBe(100);
-      expect(affairesService.calculateProgress({ statut: 'EN_ATTENTE' })).toBe(25);
-      expect(affairesService.calculateProgress({ statut: 'ANNULE' })).toBe(0);
+
+test('calculateProgress calcule correctement le pourcentage', () => {
+    expect(affairesService.calculateProgress({ statut: 'EN_COURS' })).toBe(50);
+    expect(affairesService.calculateProgress({ statut: 'TERMINE' })).toBe(100);
+    expect(affairesService.calculateProgress({ statut: 'EN_ATTENTE' })).toBe(25);
+    expect(affairesService.calculateProgress({ statut: 'ANNULE' })).toBe(0);
+    expect(affairesService.calculateProgress({ statut: 'INCONNU' })).toBe(0);
+});
+
+
     });
 
     test('getAffaires fait un appel API correct', async () => {

@@ -202,18 +202,15 @@ const affairesService = {
     return new Date(date).toLocaleDateString('fr-FR');
   },
 
-  // Calculer le pourcentage d'avancement
-  calculateProgress(affaire) {
-    if (!affaire) return 0;
-    
-    // Simple calcul basé sur le statut
-    switch (affaire.statut) {
+  // Calculer le pourcentage d'avancement à partir d'un statut
+  calculerProgression(statut) {
+    switch (statut) {
       case 'EN_ATTENTE':
-        return 0;
+        return 25;
       case 'EN_COURS':
         return 50; // Peut être affiné avec plus de logique métier
       case 'SUSPENDU':
-        return 25;
+        return 75;
       case 'TERMINE':
         return 100;
       case 'ANNULE':
