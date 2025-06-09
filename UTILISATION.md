@@ -55,11 +55,9 @@ Ce script va :
 2. Libérer les ports utilisés
 3. Nettoyer les caches
 4. Recréer les configurations nécessaires
-5. Redémarrer les serveurs avec des paramètres optimisés
+5. Redémarrer les serveurs via `concurrently` (backend et frontend)
+Les sorties des serveurs s'affichent dans le terminal. Utilisez Ctrl+C pour les arrêter.
 
-Les logs des serveurs seront disponibles dans :
-- `frontend.log` pour le frontend
-- `backend.log` pour le backend
 
 ### Problèmes avec les fichiers JSX
 
@@ -108,6 +106,5 @@ npm install
 
 Si vous rencontrez des problèmes persistants même après avoir utilisé les scripts de réparation :
 
-1. Vérifiez les logs dans `frontend.log` et `backend.log`
 2. Essayez de supprimer les répertoires `node_modules` et de réinstaller les dépendances
 3. Assurez-vous qu'aucun autre processus n'utilise les ports 3000, 5001 ou 24678 
