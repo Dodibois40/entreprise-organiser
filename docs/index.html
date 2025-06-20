@@ -1,66 +1,97 @@
 <!DOCTYPE html>
 <html lang="fr">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Application d'organisation d'entreprise" />
-    
-    <!-- Permissions Policy pour éviter les violations -->
-    <meta http-equiv="Permissions-Policy" content="fullscreen=(), camera=(), microphone=(), geolocation=()">
-    
-    <title>Entreprise Organiser</title>
-    <!-- Script pour gérer les redirections SPA -->
-    <script src="./spa-redirect.js"></script>
-    
-    <!-- Polyfill pour PropTypes -->
-    <script>
-      // Définir PropTypes globalement avant tout chargement de code
-      window.PropTypes = {
-        string: function() { return null; },
-        number: function() { return null; },
-        bool: function() { return null; },
-        func: function() { return null; },
-        array: function() { return null; },
-        object: function() { return null; },
-        node: function() { return null; },
-        element: function() { return null; },
-        instanceOf: function() { return function() { return null; }; },
-        oneOf: function() { return function() { return null; }; },
-        oneOfType: function() { return function() { return null; }; },
-        arrayOf: function() { return function() { return null; }; },
-        objectOf: function() { return function() { return null; }; },
-        shape: function() { return function() { return null; }; },
-        any: function() { return null; },
-        default: null
-      };
-      // Référence circulaire
-      window.PropTypes.default = window.PropTypes;
-      
-      // Intercepter les erreurs de modules
-      window.addEventListener('error', function(event) {
-        if (event && event.message && event.message.includes('prop-types')) {
-          event.preventDefault();
-          console.log('⚠️ Erreur prop-types interceptée et corrigée');
-          return true;
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test CRM - GitHub Pages</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-      }, true);
-      
-      // Polyfill pour CommonJS (module/require)
-      window.module = { exports: {} };
-      window.global = window;
-      window.require = function(moduleName) {
-        console.warn(`require('${moduleName}') appelé dans un environnement ESM - simulation activée`);
-        return {};
-      };
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+            max-width: 600px;
+        }
+        h1 { color: #333; margin-bottom: 20px; }
+        .status { padding: 15px; margin: 20px 0; border-radius: 8px; }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .btn {
+            background: #007bff;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px;
+        }
+        .btn:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏢 CRM Entreprise Organiser</h1>
+        
+        <div class="status success">
+            ✅ GitHub Pages fonctionne parfaitement !
+        </div>
+        
+        <p><strong>Configuration :</strong> ✅ Déployé depuis /docs sur master</p>
+        <p><strong>URL :</strong> https://Dodibois40.github.io/entreprise-organiser/</p>
+        
+        <button class="btn" onclick="loadFullCRM()">🚀 Charger le CRM complet</button>
+        <a href="./debug-auth.html" class="btn">🔍 Debug</a>
+        
+        <div id="loading" style="display:none; margin-top: 20px;">
+            <p>⏳ Chargement du CRM complet...</p>
+        </div>
+    </div>
+
+    <script>
+        function loadFullCRM() {
+            document.getElementById('loading').style.display = 'block';
+            
+            // Test de chargement des assets
+            const script = document.createElement('script');
+            script.src = './assets/index-ak4EEpgl.js';
+            script.type = 'module';
+            
+            script.onload = function() {
+                alert('✅ CRM chargé avec succès !');
+            };
+            
+            script.onerror = function() {
+                alert('❌ Erreur de chargement du CRM. Vérifiez la console (F12).');
+            };
+            
+            document.head.appendChild(script);
+        }
+        
+        // Vérifier la disponibilité des assets
+        fetch('./assets/index-ak4EEpgl.js')
+            .then(response => {
+                if (response.ok) {
+                    document.body.style.background = 'linear-gradient(135deg, #28a745 0%, #20c997 100%)';
+                    console.log('✅ Assets accessibles');
+                } else {
+                    console.error('❌ Assets non accessibles:', response.status);
+                }
+            })
+            .catch(error => {
+                console.error('❌ Erreur fetch assets:', error);
+            });
     </script>
-    <script type="module" crossorigin src="./assets/index-ak4EEpgl.js"></script>
-    <link rel="modulepreload" crossorigin href="./assets/vendor-DSrtd7_7.js">
-    <link rel="modulepreload" crossorigin href="./assets/router-4M569J-D.js">
-    <link rel="modulepreload" crossorigin href="./assets/ui-BK7ep7I_.js">
-    <link rel="stylesheet" crossorigin href="./assets/index-_nku5zWk.css">
-  </head>
-  <body>
-    <div id="root"></div>
-  </body>
-</html> 
+</body>
+</html>
