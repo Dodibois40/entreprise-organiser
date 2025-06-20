@@ -4,7 +4,7 @@ import path from 'path'
 
 export default defineConfig({
   plugins: [react()],
-  base: '/entreprise-organiser/',
+  base: './',  // Chemin relatif au lieu d'absolu
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
