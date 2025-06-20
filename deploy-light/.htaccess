@@ -1,0 +1,7 @@
+# Configuration ultra-simple
+DirectoryIndex index.html
+RewriteEngine On
+RewriteBase /entreprise-organiser/
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /entreprise-organiser/index.html [L]

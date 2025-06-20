@@ -14,7 +14,7 @@ import {
   IconTrendingDown,
   IconMinus
 } from '@tabler/icons-react';
-import notificationsService from '../services/notificationsService';
+import { notificationsService } from '@/services/notificationsService';
 
 const Notifications = () => {
   const [notifications, setNotifications] = useState([]);

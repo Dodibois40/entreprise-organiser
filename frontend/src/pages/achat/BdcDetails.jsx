@@ -31,9 +31,11 @@ import {
   IconCoin,
   IconChartBar,
   IconNotes,
-  IconPackage
+  IconPackage,
+  IconX
 } from '@tabler/icons-react';
-import { getBdc, deleteBdc, receptionnerBdc, getStatsByAffaire } from '../../services/achatService';
+import { getBdc, deleteBdc, receptionnerBdc, getStatsByAffaire, validerBdc, annulerBdc } from '@/services/achatService';
+import { PasswordModal } from '../../components/ui/password-modal';
 
 const InfoItem = ({ icon, label, value, color }) => {
   const theme = useMantineTheme();
@@ -57,6 +59,8 @@ const BdcDetails = () => {
   const [bdc, setBdc] = useState(null);
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [deletingBdc, setDeletingBdc] = useState(false);
 
   useEffect(() => {
     const fetchBdcDetails = async () => {
@@ -86,24 +90,61 @@ const BdcDetails = () => {
   }, [id]);
 
   const handleDelete = async () => {
-    if (window.confirm('Êtes-vous sûr de vouloir supprimer ce bon de commande ?')) {
-      try {
-        await deleteBdc(id);
+    // Si le BDC est validé, demander le mot de passe
+    if (bdc && bdc.statut === 'VALIDE') {
+      setShowPasswordModal(true);
+    } else {
+      // Suppression normale pour les BDC non validés
+      if (window.confirm('Êtes-vous sûr de vouloir supprimer ce bon de commande ?')) {
+        await performDelete();
+      }
+    }
+  };
+
+  const performDelete = async (password = null) => {
+    try {
+      setDeletingBdc(true);
+      await deleteBdc(id, password);
+      notifications.show({
+        title: 'Succès',
+        message: 'Bon de commande supprimé avec succès',
+        color: 'green'
+      });
+      navigate('/bdc');
+    } catch (error) {
+      console.error('Erreur lors de la suppression du bon de commande:', error);
+      
+      if (error.response?.status === 400) {
         notifications.show({
-          title: 'Succès',
-          message: 'Bon de commande supprimé avec succès',
-          color: 'green'
+          title: 'Erreur',
+          message: 'Un mot de passe est requis pour supprimer un BDC validé',
+          color: 'red'
         });
-        navigate('/bdc');
-      } catch (error) {
-        console.error('Erreur lors de la suppression du bon de commande:', error);
+      } else if (error.response?.status === 401) {
+        notifications.show({
+          title: 'Erreur',
+          message: 'Mot de passe incorrect',
+          color: 'red'
+        });
+      } else {
         notifications.show({
           title: 'Erreur',
           message: 'Impossible de supprimer le bon de commande',
           color: 'red'
         });
       }
+    } finally {
+      setDeletingBdc(false);
+      setShowPasswordModal(false);
     }
+  };
+
+  const handlePasswordConfirm = (password) => {
+    performDelete(password);
+  };
+
+  const handlePasswordModalClose = () => {
+    setShowPasswordModal(false);
   };
 
   const handleReception = async () => {
@@ -129,26 +170,102 @@ const BdcDetails = () => {
     }
   };
 
+  // Valider un BDC
+  const handleValidation = async () => {
+    try {
+      await validerBdc(id);
+      
+      // Mettre à jour l'élément
+      setBdc({ ...bdc, statut: 'VALIDE' });
+      
+      notifications.show({
+        title: 'Succès',
+        message: 'Bon de commande validé avec succès',
+        color: 'green'
+      });
+    } catch (error) {
+      console.error('Erreur lors de la validation du bon de commande:', error);
+      notifications.show({
+        title: 'Erreur',
+        message: 'Impossible de valider le bon de commande',
+        color: 'red'
+      });
+    }
+  };
+
+  // Annuler un BDC
+  const handleAnnulation = async () => {
+    if (window.confirm('Êtes-vous sûr de vouloir annuler ce bon de commande ?')) {
+      try {
+        await annulerBdc(id);
+        
+        // Mettre à jour l'élément
+        setBdc({ ...bdc, statut: 'ANNULE' });
+        
+        notifications.show({
+          title: 'Succès',
+          message: 'Bon de commande annulé avec succès',
+          color: 'orange'
+        });
+      } catch (error) {
+        console.error('Erreur lors de l\'annulation du bon de commande:', error);
+        notifications.show({
+          title: 'Erreur',
+          message: 'Impossible d\'annuler le bon de commande',
+          color: 'red'
+        });
+      }
+    }
+  };
+
   // Statut du BDC (badge)
   const getBadgeStatus = () => {
     if (!bdc) return null;
     
+    const statusConfig = {
+      'EN_ATTENTE': { 
+        color: 'orange', 
+        icon: IconClock, 
+        text: 'En attente de validation' 
+      },
+      'VALIDE': { 
+        color: 'blue', 
+        icon: IconCheck, 
+        text: 'Validé' 
+      },
+      'RECEPTIONNE': { 
+        color: 'green', 
+        icon: IconCheck, 
+        text: 'Réceptionné' 
+      },
+      'ANNULE': { 
+        color: 'red', 
+        icon: IconX, 
+        text: 'Annulé' 
+      }
+    };
+
+    // Priorité : dateReception > statut
     if (bdc.dateReception) {
+      const config = statusConfig['RECEPTIONNE'];
+      const IconComponent = config.icon;
       return (
-        <Badge color="green" size="lg" variant="light">
+        <Badge color={config.color} size="lg" variant="light">
           <Group spacing={4}>
-            <IconCheck size={16} />
+            <IconComponent size={16} />
             <Text>Réceptionné le {new Date(bdc.dateReception).toLocaleDateString('fr-FR')}</Text>
           </Group>
         </Badge>
       );
     }
-    
+
+    const config = statusConfig[bdc.statut] || statusConfig['EN_ATTENTE'];
+    const IconComponent = config.icon;
     return (
-      <Badge color="orange" size="lg" variant="light">
+      <Badge color={config.color} size="lg" variant="light">
         <Group spacing={4}>
-          <IconClock size={16} />
-          <Text>En attente de réception</Text>
+          <IconComponent size={16} />
+          <Text>{config.text}</Text>
         </Group>
       </Badge>
     );
@@ -156,7 +273,7 @@ const BdcDetails = () => {
 
   return (
     <Container size="xl">
-      <LoadingOverlay visible={loading} overlayBlur={2} />
+      <LoadingOverlay visible={loading} overlayProps={{ blur: 2 }} />
       
       <Group position="apart" mb="lg" align="center">
         <Group>
@@ -175,20 +292,42 @@ const BdcDetails = () => {
         </Group>
         
         <Group>
-          {bdc && !bdc.dateReception && (
+          {/* Actions selon le statut */}
+          {bdc && bdc.statut === 'EN_ATTENTE' && (
+            <>
+              <Button 
+                color="blue" 
+                onClick={handleValidation}
+                leftSection={<IconCheck size={16} />}
+              >
+                Valider
+              </Button>
+              <Button 
+                color="red" 
+                variant="outline"
+                onClick={handleAnnulation}
+                leftSection={<IconX size={16} />}
+              >
+                Annuler
+              </Button>
+            </>
+          )}
+          
+          {bdc && bdc.statut === 'VALIDE' && !bdc.dateReception && (
             <Button 
               color="green" 
               onClick={handleReception}
-              leftIcon={<IconCheck size={16} />}
+              leftSection={<IconCheck size={16} />}
             >
               Réceptionner
             </Button>
           )}
+          
           <Button 
             variant="outline" 
             component={Link} 
             to={`/bdc/${id}/modifier`}
-            leftIcon={<IconPencil size={16} />}
+            leftSection={<IconPencil size={16} />}
           >
             Modifier
           </Button>
@@ -196,7 +335,7 @@ const BdcDetails = () => {
             color="red" 
             variant="subtle" 
             onClick={handleDelete}
-            leftIcon={<IconTrash size={16} />}
+            leftSection={<IconTrash size={16} />}
           >
             Supprimer
           </Button>
@@ -354,6 +493,16 @@ const BdcDetails = () => {
           </Grid.Col>
         </Grid>
       )}
+      
+      {/* Modal de mot de passe */}
+      <PasswordModal
+        isOpen={showPasswordModal}
+        onClose={handlePasswordModalClose}
+        onConfirm={handlePasswordConfirm}
+        title="Suppression d'un BDC validé"
+        message={`Ce bon de commande (${bdc?.numero}) est validé. Un mot de passe administrateur est requis pour le supprimer.`}
+        loading={deletingBdc}
+      />
     </Container>
   );
 };

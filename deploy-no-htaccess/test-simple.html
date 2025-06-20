@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Simple - CRM</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        h1 { margin: 0 0 20px 0; font-size: 2.5em; }
+        .status {
+            background: rgba(40, 167, 69, 0.2);
+            border: 2px solid #28a745;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .btn {
+            background: #007bff;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+        }
+        .info {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎉 CRM Sans .htaccess</h1>
+        
+        <div class="status">
+            <h3>✅ Serveur Fonctionnel</h3>
+            <p>Cette page s'affiche = Pas d'erreur 500 !</p>
+        </div>
+        
+        <div class="info">
+            <strong>📊 Informations :</strong><br>
+            • Pas de .htaccess = Pas de conflit<br>
+            • Fichiers statiques uniquement<br>
+            • Compatible avec site existant<br>
+            • Date : <span id="date"></span>
+        </div>
+        
+        <div>
+            <a href="index.html" class="btn">🏠 Accéder au CRM</a>
+            <a href="../" class="btn">⬆️ Site Principal</a>
+        </div>
+        
+        <p><small>Si cette page s'affiche, le problème était bien le .htaccess !</small></p>
+    </div>
+    
+    <script>
+        document.getElementById('date').textContent = new Date().toLocaleString('fr-FR');
+        
+        // Test de fonctionnement JavaScript
+        console.log('✅ JavaScript fonctionne sur O2Switch');
+        
+        // Vérifier si on peut accéder aux assets
+        fetch('./assets/index-_nku5zWk.css')
+            .then(response => {
+                if(response.ok) {
+                    console.log('✅ Assets CSS accessibles');
+                } else {
+                    console.log('❌ Problème assets CSS');
+                }
+            })
+            .catch(err => console.log('❌ Erreur fetch:', err));
+    </script>
+</body>
+</html>

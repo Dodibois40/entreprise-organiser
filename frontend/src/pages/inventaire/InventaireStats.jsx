@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getStatistiquesInventaire, getCategoriesArticle } from '../../services/inventaireService';
+import { getStatistiquesInventaire, getCategoriesArticle } from '@/services/inventaireService';
 import { 
   Card, 
   CardContent, 
@@ -8,7 +8,7 @@ import {
   CardDescription, 
   CardFooter 
 } from '@/components/ui/card';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 import { Doughnut, Bar } from 'react-chartjs-2';

@@ -3,16 +3,12 @@ import { IsNotEmpty, IsString, IsNumber, IsOptional, IsUUID, IsDate, Min, Matche
 import { Type } from 'class-transformer';
 
 export class CreateBdcDto {
-  @ApiProperty({
-    description: 'Numéro unique du bon de commande',
-    example: 'BDC-2024-001',
-  })
-  @IsString()
-  @IsNotEmpty()
-  @Matches(/^BDC-\d{4}-\d{3}$/, {
-    message: 'Le numéro doit être au format BDC-XXXX-XXX (ex: BDC-2024-001)',
-  })
-  numero: string;
+  // Le numéro sera généré automatiquement par le backend, pas besoin de le passer
+  // @ApiProperty({
+  //   description: 'Numéro unique du bon de commande (généré automatiquement)',
+  //   example: 'BDC 001 010',
+  // })
+  // numero?: string;
 
   @ApiProperty({
     description: 'Montant HT du bon de commande',
@@ -65,10 +61,29 @@ export class CreateBdcDto {
   dateReception?: Date;
 
   @ApiPropertyOptional({
+    description: 'Date de livraison prévue',
+    example: '2024-03-25',
+  })
+  @IsOptional()
+  @IsDate()
+  @Type(() => Date)
+  dateLivraison?: Date;
+
+  @ApiPropertyOptional({
     description: 'Commentaire sur le bon de commande',
     example: 'Livraison urgente requise',
   })
   @IsString()
   @IsOptional()
   commentaire?: string;
+}
+
+export class DeleteBdcDto {
+  @ApiProperty({
+    description: 'Mot de passe de sécurité pour supprimer un BDC validé',
+    example: '1234',
+  })
+  @IsString()
+  @IsNotEmpty()
+  password: string;
 } 

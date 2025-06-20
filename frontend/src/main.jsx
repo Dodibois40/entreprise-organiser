@@ -1,13 +1,20 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
+import { MantineProvider } from '@mantine/core';
+import { Notifications } from '@mantine/notifications';
 import App from './App';
 import Router from './router'; // Assurez-vous que ce chemin est correct
 import { AuthProvider } from './contexts/AuthContext'; // Assurez-vous que ce chemin est correct
 import './index.css';
+import '@mantine/core/styles.css';
+import '@mantine/notifications/styles.css';
+import '@mantine/dates/styles.css';
+import './styles/calendar.css';
 
 // Importer les correctifs avant tout autre code
 import './utils/PropTypesFix'; // Ajouté
+import './utils/chartConfig'; // Configuration Chart.js
 
 
 
@@ -55,12 +62,15 @@ window.addEventListener('error', (event) => {
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <BrowserRouter>
-      <AuthProvider>
-        <App>
-          <Router />
-        </App>
-      </AuthProvider>
-    </BrowserRouter>
+    <MantineProvider>
+      <Notifications />
+      <BrowserRouter>
+        <AuthProvider>
+          <App>
+            <Router />
+          </App>
+        </AuthProvider>
+      </BrowserRouter>
+    </MantineProvider>
   </React.StrictMode>
 );

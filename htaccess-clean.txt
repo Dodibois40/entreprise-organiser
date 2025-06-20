@@ -1,0 +1,13 @@
+# .htaccess nettoyé - Suppression des redirections automatiques
+# CRM Entreprise - O2Switch
+
+# Pas de redirection automatique vers le domaine principal
+# RewriteEngine Off (temporairement pour tester)
+
+# Types MIME de base seulement
+AddType text/html .html
+AddType text/css .css
+AddType application/javascript .js
+AddType application/json .json
+
+# Pas de règles de redirection

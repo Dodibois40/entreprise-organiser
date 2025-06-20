@@ -1,0 +1,14 @@
+# Configuration minimale O2Switch
+RewriteEngine On
+RewriteBase /entreprise-organiser/
+
+# Page d'accueil
+RewriteRule ^$ index-inline.html [L]
+
+# Fichiers statiques
+RewriteRule \.(html|css|json|svg|png|jpg|jpeg|gif|ico)$ - [L]
+
+# Redirection par défaut
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . index-inline.html [L]

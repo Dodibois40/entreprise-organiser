@@ -1,19 +1,12 @@
 {
-  "verbose": true,
-  "ignore": [
-    ".git",
-    "node_modules/**/node_modules",
-    "logs/*",
-    "src/generated/"
-  ],
-  "watch": [
-    "src/**/*.js",
-    "src/**/*.ts"
-  ],
+  "watch": ["src"],
+  "ext": "ts,js",
+  "ignore": ["src/**/*.spec.ts"],
+  "exec": "ts-node src/main.ts",
   "env": {
     "NODE_ENV": "development"
   },
-  "ext": "js,json,ts",
+  "verbose": true,
   "delay": "1000",
   "restartable": "rs"
 }

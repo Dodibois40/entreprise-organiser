@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getBdc, createBdc, updateBdc, getAffaires, getCategoriesAchat } from '../../services/achatService';
+import { getBdc, createBdc, updateBdc, getAffaires, getCategoriesAchat } from '@/services/achatService';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -15,14 +15,13 @@ const BdcForm = () => {
   const isEditMode = Boolean(id);
 
   const [formData, setFormData] = useState({
-    numero: '',
-    date_creation: new Date().toISOString().split('T')[0],
+    // numero généré automatiquement par le backend
+    dateBdc: new Date().toISOString().split('T')[0],
     fournisseur: '',
     affaireId: '',
-    categorieAchatId: '',
-    description: '',
-    montant_ht: 0,
-    statut: 'COMMANDE',
+    categorieId: '',
+    commentaire: '',
+    montantHt: 0,
   });
 
   const [affaires, setAffaires] = useState([]);
@@ -30,6 +29,7 @@ const BdcForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [formErrors, setFormErrors] = useState({});
+  const [bdcNumero, setBdcNumero] = useState(''); // Pour afficher le numéro en mode édition
 
   useEffect(() => {
     const fetchData = async () => {
@@ -46,15 +46,17 @@ const BdcForm = () => {
           const bdcData = await getBdc(id);
           if (bdcData) {
             setFormData({
-              numero: bdcData.numero || '',
-              date_creation: bdcData.date_creation ? new Date(bdcData.date_creation).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+              // numero généré automatiquement, on ne l'affiche que pour info
+              dateBdc: bdcData.dateBdc ? new Date(bdcData.dateBdc).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
               fournisseur: bdcData.fournisseur || '',
               affaireId: String(bdcData.affaireId || ''),
-              categorieAchatId: String(bdcData.categorieAchatId || ''),
-              description: bdcData.description || '',
-              montant_ht: bdcData.montant_ht || 0,
-              statut: bdcData.statut || 'COMMANDE',
+              categorieId: String(bdcData.categorieId || ''),
+              commentaire: bdcData.commentaire || '',
+              montantHt: bdcData.montantHt || 0,
             });
+            
+            // Stocker le numéro pour l'affichage
+            setBdcNumero(bdcData.numero || '');
           } else {
             setError('BDC non trouvé');
             toast.error("Bon de commande non trouvé.");
@@ -89,11 +91,11 @@ const BdcForm = () => {
     if (!formData.affaireId) {
       newErrors.affaireId = "L'affaire est requise";
     }
-    if (!formData.categorieAchatId) {
-      newErrors.categorieAchatId = "La catégorie est requise";
+    if (!formData.categorieId) {
+      newErrors.categorieId = "La catégorie est requise";
     }
-    if (!formData.montant_ht || parseFloat(formData.montant_ht) <= 0) {
-      newErrors.montant_ht = "Le montant doit être supérieur à 0";
+    if (!formData.montantHt || parseFloat(formData.montantHt) <= 0) {
+      newErrors.montantHt = "Le montant doit être supérieur à 0";
     }
     setFormErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -112,9 +114,10 @@ const BdcForm = () => {
     try {
       const dataToSubmit = {
         ...formData,
-        montant_ht: parseFloat(formData.montant_ht),
-        affaireId: parseInt(formData.affaireId, 10),
-        categorieAchatId: parseInt(formData.categorieAchatId, 10),
+        montantHt: parseFloat(formData.montantHt),
+        affaireId: formData.affaireId,
+        categorieId: formData.categorieId,
+        dateBdc: new Date(formData.dateBdc),
       };
 
       if (isEditMode) {
@@ -141,17 +144,29 @@ const BdcForm = () => {
       <Card>
         <CardHeader>
           <CardTitle>{isEditMode ? 'Modifier le Bon de Commande' : 'Créer un Bon de Commande'}</CardTitle>
+          {!isEditMode && (
+            <p className="text-sm text-gray-600 mt-2">
+              📝 Le numéro de BDC sera généré automatiquement au format : BDC-YYYY-XXX (ex: BDC-2025-001)
+            </p>
+          )}
         </CardHeader>
         <CardContent>
           {isEditMode && error && <p className="text-red-500 mb-4">Erreur: {error}</p>}
           <form onSubmit={handleSubmit} className="space-y-6">
+            {isEditMode && bdcNumero && (
+              <div>
+                <Label>Numéro BDC</Label>
+                <div className="p-2 bg-gray-50 border rounded-md text-gray-700 font-mono">
+                  {bdcNumero}
+                </div>
+                <p className="text-sm text-gray-500 mt-1">
+                  Le numéro de BDC est généré automatiquement au format : BDC-YYYY-XXX (ex: BDC-2025-001)
+                </p>
+              </div>
+            )}
             <div>
-              <Label htmlFor="numero">Numéro BDC (optionnel)</Label>
-              <Input id="numero" name="numero" value={formData.numero} onChange={handleChange} placeholder="Ex: BDC00123" />
-            </div>
-            <div>
-              <Label htmlFor="date_creation">Date de création *</Label>
-              <Input id="date_creation" name="date_creation" type="date" value={formData.date_creation} onChange={handleChange} required />
+              <Label htmlFor="dateBdc">Date de création *</Label>
+              <Input id="dateBdc" name="dateBdc" type="date" value={formData.dateBdc} onChange={handleChange} required />
             </div>
             <div>
               <Label htmlFor="fournisseur">Fournisseur *</Label>
@@ -169,7 +184,7 @@ const BdcForm = () => {
                 </SelectTrigger>
                 <SelectContent>
                   {affaires.map(affaire => (
-                    <SelectItem key={affaire.id} value={String(affaire.id)}>{affaire.nom} ({affaire.numero})</SelectItem>
+                    <SelectItem key={affaire.id} value={String(affaire.id)}>{affaire.libelle} ({affaire.numero})</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -179,8 +194,8 @@ const BdcForm = () => {
             </div>
 
             <div>
-              <Label htmlFor="categorieAchatId">Catégorie d'achat *</Label>
-              <Select name="categorieAchatId" value={formData.categorieAchatId} onValueChange={(value) => handleSelectChange('categorieAchatId', value)} required>
+              <Label htmlFor="categorieId">Catégorie d'achat *</Label>
+              <Select name="categorieId" value={formData.categorieId} onValueChange={(value) => handleSelectChange('categorieId', value)} required>
                 <SelectTrigger>
                   <SelectValue placeholder="Sélectionner une catégorie" />
                 </SelectTrigger>
@@ -190,37 +205,22 @@ const BdcForm = () => {
                   ))}
                 </SelectContent>
               </Select>
-              {formErrors.categorieAchatId && (
-                <p className="text-red-500 text-sm mt-1">{formErrors.categorieAchatId}</p>
+              {formErrors.categorieId && (
+                <p className="text-red-500 text-sm mt-1">{formErrors.categorieId}</p>
               )}
             </div>
 
             <div>
-              <Label htmlFor="description">Description</Label>
-              <Textarea id="description" name="description" value={formData.description} onChange={handleChange} placeholder="Description détaillée de la commande..." />
+              <Label htmlFor="commentaire">Commentaire</Label>
+              <Textarea id="commentaire" name="commentaire" value={formData.commentaire} onChange={handleChange} placeholder="Commentaire sur la commande..." />
             </div>
 
             <div>
-              <Label htmlFor="montant_ht">Montant HT *</Label>
-              <Input id="montant_ht" name="montant_ht" type="number" step="0.01" value={formData.montant_ht} onChange={handleChange} required placeholder="0.00" />
-              {formErrors.montant_ht && (
-                <p className="text-red-500 text-sm mt-1">{formErrors.montant_ht}</p>
+              <Label htmlFor="montantHt">Montant HT *</Label>
+              <Input id="montantHt" name="montantHt" type="number" step="0.01" value={formData.montantHt} onChange={handleChange} required placeholder="0.00" />
+              {formErrors.montantHt && (
+                <p className="text-red-500 text-sm mt-1">{formErrors.montantHt}</p>
               )}
-            </div>
-            
-            <div>
-              <Label htmlFor="statut">Statut</Label>
-              <Select name="statut" value={formData.statut} onValueChange={(value) => handleSelectChange('statut', value)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Sélectionner un statut" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="COMMANDE">Commandé</SelectItem>
-                  <SelectItem value="RECEPTION_PARTIELLE">Réception Partielle</SelectItem>
-                  <SelectItem value="RECEPTION_TOTALE">Réception Totale</SelectItem>
-                  <SelectItem value="ANNULE">Annulé</SelectItem>
-                </SelectContent>
-              </Select>
             </div>
 
             <div className="flex justify-end space-x-2">

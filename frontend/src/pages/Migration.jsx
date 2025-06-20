@@ -10,7 +10,7 @@ import {
   IconPackage,
   IconClipboardList
 } from '@tabler/icons-react';
-import migrationService from '../services/migrationService';
+import migrationService from '@/services/migrationService';
 
 const Migration = () => {
   const [loading, setLoading] = useState({});

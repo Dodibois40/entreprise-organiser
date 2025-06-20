@@ -44,7 +44,7 @@ import {
   getPlanningById, 
   createPlanning, 
   updatePlanning 
-} from '../../services/planningService';
+} from '@/services/planningService';
 
 function PlanningForm() {
   const { id } = useParams();

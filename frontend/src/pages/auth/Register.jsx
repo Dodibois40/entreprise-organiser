@@ -170,7 +170,7 @@ const Register = () => {
         <Button
           fullWidth
           type="submit"
-          leftIcon={<IconUserPlus size={18} />}
+          leftSection={<IconUserPlus size={18} />}
           loading={loading}
         >
           Créer un compte

@@ -4,7 +4,7 @@ import {
   createParametre, 
   updateParametre, 
   getParametreById 
-} from '../../services/parametresService';
+} from '@/services/parametresService';
 
 const ParametreForm = () => {
   const navigate = useNavigate();

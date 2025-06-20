@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head><title>Test 6</title></head>
+<body>
+    <h1>Test 6 : Chargement JSON</h1>
+    <div id="json-result">Chargement JSON...</div>
+    <script>
+        fetch('test6.json')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('json-result').innerHTML = 
+                    'JSON chargé : ' + data.test + ' - ' + data.date;
+            })
+            .catch(error => {
+                document.getElementById('json-result').innerHTML = 
+                    'Erreur JSON : ' + error.message;
+            });
+    </script>
+</body>
+</html>

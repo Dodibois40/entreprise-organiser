@@ -1,4 +1,4 @@
-import api from './api';
+import api from './api.js';
 
 /**
  * Service pour la génération de rapports et de statistiques.
@@ -132,4 +132,5 @@ const reportingService = {
   getInventaireStats
 };
 
+export { reportingService };
 export default reportingService; 

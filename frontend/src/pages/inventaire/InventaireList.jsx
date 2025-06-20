@@ -4,7 +4,7 @@ import {
   getCategoriesArticle, 
   deleteArticle, 
   ajusterStock
-} from '../../services/inventaireService';
+} from '@/services/inventaireService';
 import { 
   Card, 
   CardContent, 
@@ -13,7 +13,7 @@ import {
   CardDescription, 
   CardFooter 
 } from '@/components/ui/card';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { 
   Table, 

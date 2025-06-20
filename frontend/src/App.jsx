@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ThemeProvider } from './contexts/ThemeContext';
+import { UsersProvider } from './contexts/UsersContext';
 import { Toaster } from 'sonner';
 
 // Composant pour détecter les rechargements de page
@@ -72,22 +73,24 @@ function App({ children }) {
   
   return (
     <ThemeProvider>
-      {/* Toast System */}
-      <Toaster {...toasterProps} />
-      
-      {/* Page Reload Indicator */}
-      <PageReloadIndicator key={reloadKey} />
-      
-      {/* Main App Content */}
-      <div className="app-container">
-        {children}
-      </div>
-      
-      {/* Background Effects */}
-      <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full blur-3xl animate-pulse-custom"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-pink-400/20 to-orange-400/20 rounded-full blur-3xl animate-pulse-custom delay-1000"></div>
-      </div>
+      <UsersProvider>
+        {/* Toast System */}
+        <Toaster {...toasterProps} />
+        
+        {/* Page Reload Indicator */}
+        <PageReloadIndicator key={reloadKey} />
+        
+        {/* Main App Content */}
+        <div className="app-container">
+          {children}
+        </div>
+        
+        {/* Background Effects */}
+        <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
+          <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full blur-3xl animate-pulse-custom"></div>
+          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-pink-400/20 to-orange-400/20 rounded-full blur-3xl animate-pulse-custom delay-1000"></div>
+        </div>
+      </UsersProvider>
     </ThemeProvider>
   );
 }

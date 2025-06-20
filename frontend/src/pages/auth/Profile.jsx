@@ -150,7 +150,7 @@ const Profile = () => {
           
           <Button
             type="submit"
-            leftIcon={<IconDeviceFloppy size={18} />}
+            leftSection={<IconDeviceFloppy size={18} />}
             loading={loading}
             mt="md"
           >

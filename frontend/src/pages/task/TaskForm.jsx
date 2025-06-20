@@ -5,7 +5,7 @@ import { DatePicker } from '@mantine/dates';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import { IconDeviceFloppy, IconArrowLeft, IconCalendarEvent, IconClockHour4 } from '@tabler/icons-react';
-import taskService from '../../services/taskService';
+import taskService from '@/services/taskService';
 import { useAuth } from '../../contexts/AuthContext';
 
 const TaskForm = () => {
@@ -135,7 +135,7 @@ const TaskForm = () => {
       <Group position="apart" mb="md">
         <Button 
           variant="outline" 
-          leftIcon={<IconArrowLeft size={16} />}
+                      leftSection={<IconArrowLeft size={16} />}
           onClick={() => navigate('/taches')}
         >
           Retour à la liste
@@ -272,7 +272,7 @@ const TaskForm = () => {
             
             <Button
               type="submit"
-              leftIcon={<IconDeviceFloppy size={16} />}
+              leftSection={<IconDeviceFloppy size={16} />}
               loading={loading}
             >
               Enregistrer

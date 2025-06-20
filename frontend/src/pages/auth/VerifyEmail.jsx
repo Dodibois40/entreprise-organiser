@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { IconCheck, IconX, IconLoader } from '@tabler/icons-react';
 import { toast } from 'sonner';
-import authService from '../../services/authService';
-import { Button } from '@/components/ui/Button';
+import authService from '@/services/authService';
+import { Button } from '@/components/ui/button';
 
 const VerifyEmail = () => {
   const { token } = useParams();

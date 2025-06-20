@@ -1,4 +1,4 @@
-import { PrismaClient, RoleEnum } from '../generated/prisma';
+import { PrismaClient, RoleEnum } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
@@ -29,14 +29,27 @@ async function main() {
 
   // Création des utilisateurs
   const passwordHash = await bcrypt.hash('password123', 10);
+  const adminPasswordHash = await bcrypt.hash('admin123', 10);
 
   const adminUser = await prisma.user.create({
+    data: {
+      email: 'admin@example.com',
+      nom: 'Admin',
+      prenom: 'Système',
+      passwordHash: adminPasswordHash,
+      role: RoleEnum.ADMIN_SYS,
+      tarifHoraireBase: 50
+    }
+  });
+
+  const adminUserFr = await prisma.user.create({
     data: {
       email: 'admin@exemple.fr',
       nom: 'Admin',
       prenom: 'Système',
       passwordHash,
-      role: RoleEnum.ADMIN_SYS
+      role: RoleEnum.ADMIN_SYS,
+      tarifHoraireBase: 50
     }
   });
 
@@ -46,7 +59,8 @@ async function main() {
       nom: 'Dupont',
       prenom: 'Jean',
       passwordHash,
-      role: RoleEnum.CHARGE_AFFAIRE
+      role: RoleEnum.CHARGE_AFFAIRE,
+      tarifHoraireBase: 45
     }
   });
 
@@ -56,7 +70,8 @@ async function main() {
       nom: 'Martin',
       prenom: 'Sophie',
       passwordHash,
-      role: RoleEnum.ACHETEUR
+      role: RoleEnum.ACHETEUR,
+      tarifHoraireBase: 40
     }
   });
 
@@ -66,7 +81,8 @@ async function main() {
       nom: 'Durand',
       prenom: 'Pierre',
       passwordHash,
-      role: RoleEnum.CHEF_ATELIER
+      role: RoleEnum.CHEF_ATELIER,
+      tarifHoraireBase: 42
     }
   });
 
@@ -105,6 +121,14 @@ async function main() {
     }
   });
 
+  const categorieAutre = await prisma.categorieAchat.create({
+    data: {
+      code: 'AUT',
+      intitule: 'Autre',
+      pourcentageFg: 10
+    }
+  });
+
   console.log('Catégories d\'achat créées');
 
   // Création des affaires
@@ -118,8 +142,8 @@ async function main() {
       objectifCaHt: 15000,
       objectifAchatHt: 8000,
       objectifHeuresFab: 120,
-      ser: 10,
-      pose: 25,
+      objectifHeuresSer: 10,
+      objectifHeuresPose: 25,
       statut: 'EN_COURS'
     }
   });
@@ -134,8 +158,8 @@ async function main() {
       objectifCaHt: 8500,
       objectifAchatHt: 4200,
       objectifHeuresFab: 80,
-      ser: 5,
-      pose: 15,
+      objectifHeuresSer: 5,
+      objectifHeuresPose: 15,
       statut: 'PLANIFIEE'
     }
   });
@@ -145,10 +169,10 @@ async function main() {
   // Création des bons de commande
   const bdc1 = await prisma.bdc.create({
     data: {
-      numero: 'BDC-2024-001',
+      numero: 'BDC-2025-001',
       montantHt: 3200,
-      dateBdc: new Date('2024-02-10'),
-      dateReception: new Date('2024-02-25'),
+      dateBdc: new Date('2025-02-10'),
+      dateReception: new Date('2025-02-25'),
       commentaire: 'Livraison complète',
       affaireId: affaire1.id,
       categorieId: categorieBois.id,
@@ -159,9 +183,9 @@ async function main() {
 
   const bdc2 = await prisma.bdc.create({
     data: {
-      numero: 'BDC-2024-002',
+      numero: 'BDC-2025-002',
       montantHt: 1800,
-      dateBdc: new Date('2024-02-15'),
+      dateBdc: new Date('2025-02-15'),
       commentaire: 'En attente de livraison',
       affaireId: affaire1.id,
       categorieId: categorieQuincaillerie.id,
@@ -172,9 +196,9 @@ async function main() {
 
   const bdc3 = await prisma.bdc.create({
     data: {
-      numero: 'BDC-2024-003',
+      numero: 'BDC-2025-003',
       montantHt: 2500,
-      dateBdc: new Date('2024-03-01'),
+      dateBdc: new Date('2025-03-01'),
       commentaire: 'Commande confirmée',
       affaireId: affaire2.id,
       categorieId: categorieVitrage.id,

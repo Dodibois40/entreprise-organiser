@@ -1,0 +1,9 @@
+# .htaccess ULTRA-SIMPLE pour O2Switch
+# Aucune règle complexe
+
+# Types MIME de base seulement
+AddType text/html .html
+AddType text/css .css
+AddType application/javascript .js
+
+# Pas de RewriteEngine = Pas d'erreur 500

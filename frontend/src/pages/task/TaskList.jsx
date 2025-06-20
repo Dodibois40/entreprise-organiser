@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Title, Button, Group, Paper, Text, Badge, ActionIcon, Menu, Select, TextInput, Table, Pagination, LoadingOverlay } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { IconPlus, IconSearch, IconFilter, IconEdit, IconTrash, IconDotsVertical, IconCheck, IconClock, IconAlertCircle } from '@tabler/icons-react';
-import taskService from '../../services/taskService';
+import taskService from '@/services/taskService';
 
 const TaskList = () => {
   const navigate = useNavigate();
@@ -123,7 +123,7 @@ const TaskList = () => {
         <Title>Gestion des Tâches</Title>
         
         <Button
-          leftIcon={<IconPlus size={16} />}
+          leftSection={<IconPlus size={16} />}
           onClick={() => navigate('/taches/nouveau')}
         >
           Nouvelle Tâche

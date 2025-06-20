@@ -103,7 +103,7 @@ const UserForm = () => {
       <Group position="apart" mb="md">
         <Button 
           variant="outline" 
-          leftIcon={<IconArrowLeft size={16} />}
+                      leftSection={<IconArrowLeft size={16} />}
           onClick={() => navigate('/collaborateurs')}
         >
           Retour à la liste
@@ -206,7 +206,7 @@ const UserForm = () => {
             
             <Button
               type="submit"
-              leftIcon={<IconDeviceFloppy size={16} />}
+              leftSection={<IconDeviceFloppy size={16} />}
               loading={loading}
             >
               Enregistrer

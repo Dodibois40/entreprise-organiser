@@ -46,8 +46,8 @@ import {
   IconLayoutGrid
 } from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
-import { getAllPlannings, deletePlanning } from '../../services/planningService';
-import { Button } from '@/components/ui/Button';
+import { getAllPlannings, deletePlanning } from '@/services/planningService';
+import { Button } from '@/components/ui/button';
 
 // Fonction pour formater les dates
 const formatDate = (dateString) => {

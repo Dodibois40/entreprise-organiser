@@ -29,9 +29,12 @@ import {
   IconDeviceAnalytics,
   IconTool,
   IconCalendar,
-  IconClock
+  IconClock,
+  IconBug
 } from '@tabler/icons-react';
 import NotificationCenter from './NotificationCenter';
+import BrowserDiagnostic from './BrowserDiagnostic';
+import TroubleshootingGuide from './TroubleshootingGuide';
 import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
 
@@ -48,10 +51,11 @@ const navigationConfig = [
     group: 'Gestion',
     items: [
       { path: '/affaires', label: 'Affaires', icon: IconBriefcase, color: 'text-blue-600' },
+      { path: '/devis', label: 'Devis', icon: IconFileAnalytics, color: 'text-indigo-600' },
       { path: '/pointages', label: 'Pointages', icon: IconClockHour4, color: 'text-green-600' },
       { path: '/achats', label: 'Achats', icon: IconShoppingCart, color: 'text-purple-600' },
-      { path: '/bdc', label: 'Bons de commande', icon: IconCurrencyEuro, color: 'text-indigo-600' },
-      { path: '/articles', label: 'Articles', icon: IconPackage, color: 'text-orange-600' },
+      { path: '/fournisseurs', label: 'Fournisseurs', icon: IconBuildingFactory, color: 'text-orange-600' },
+      // { path: '/articles', label: 'Articles', icon: IconPackage, color: 'text-orange-600' }, // MODULE EN SOMMEIL
     ]
   },
   {
@@ -71,6 +75,7 @@ const navigationConfig = [
   {
     group: 'Administration',
     items: [
+      { path: '/users', label: 'Gestion des Ouvriers', icon: IconUsers, color: 'text-purple-600' },
       { path: '/parametres', label: 'Paramètres', icon: IconSettings, color: 'text-gray-600' },
       { path: '/migration', label: 'Migration Excel', icon: IconDatabase, color: 'text-teal-600' },
     ]
@@ -80,6 +85,8 @@ const navigationConfig = [
 const Layout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [showDiagnostic, setShowDiagnostic] = useState(false);
+  const [showTroubleshooting, setShowTroubleshooting] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const { user, logout } = useAuth();
@@ -117,15 +124,17 @@ const Layout = () => {
       <div className={`fixed inset-y-0 left-0 z-50 w-72 transform transition-transform duration-300 ease-in-out ${
         sidebarOpen ? 'translate-x-0' : '-translate-x-full'
       } lg:translate-x-0`}>
-        <div className="flex h-full flex-col bg-white/80 backdrop-blur-xl border-r border-gray-200/50 dark:bg-gray-900/80 dark:border-gray-700/50">
+        <div className="flex h-full flex-col bg-white/95 backdrop-blur-xl border-r border-gray-200/50 dark:bg-gray-900/95 dark:border-gray-700/50 shadow-2xl">
           {/* Logo et Brand */}
-          <div className="flex h-20 items-center justify-between px-6 border-b border-gray-200/50 dark:border-gray-700/50">
+          <div className="flex h-20 items-center justify-between px-6 border-b border-gray-200/50 dark:border-gray-700/50 bg-gradient-to-r from-blue-600/5 to-purple-600/5">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg">
                 <IconBuildingFactory className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-lg font-bold gradient-text">Entreprise</h1>
+                <h1 className="text-lg font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                  Entreprise
+                </h1>
                 <p className="text-xs text-gray-500 dark:text-gray-400">Organiser CRM</p>
               </div>
             </div>
@@ -138,10 +147,11 @@ const Layout = () => {
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 px-4 py-6 space-y-8 overflow-y-auto">
+          <nav className="flex-1 px-4 py-6 space-y-6 overflow-y-auto">
             {navigationConfig.map((group) => (
-              <div key={group.group} className="space-y-2">
-                <h3 className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider dark:text-gray-400">
+              <div key={group.group} className="space-y-3">
+                <h3 className="px-3 text-xs font-bold text-gray-500 uppercase tracking-wider dark:text-gray-400 flex items-center gap-2">
+                  <div className="w-4 h-0.5 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full"></div>
                   {group.group}
                 </h3>
                 <div className="space-y-1">
@@ -153,20 +163,34 @@ const Layout = () => {
                       <NavLink
                         key={item.path}
                         to={item.path}
-                        className={`nav-item group ${isActive ? 'active' : ''}`}
-                      >
-                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${
+                        className={`sidebar-nav-item flex items-center space-x-3 px-3 py-3 rounded-xl transition-all duration-300 group relative ${
                           isActive 
-                            ? 'bg-white/20' 
-                            : 'bg-gray-100 dark:bg-gray-800 group-hover:bg-gray-200 dark:group-hover:bg-gray-700'
+                            ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg transform scale-[1.02]' 
+                            : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100/70 dark:hover:bg-gray-800/70 hover:transform hover:scale-[1.01]'
+                        }`}
+                      >
+                        {/* Indicateur actif */}
+                        {isActive && (
+                          <div className="absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-8 bg-white rounded-r-full shadow-sm"></div>
+                        )}
+                        
+                        <div className={`w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-300 ${
+                          isActive 
+                            ? 'bg-white/20 shadow-lg' 
+                            : 'bg-gray-100/70 dark:bg-gray-800/70 group-hover:bg-gray-200/70 dark:group-hover:bg-gray-700/70'
                         }`}>
                           <Icon className={`w-5 h-5 ${isActive ? 'text-white' : item.color}`} />
                         </div>
-                        <span className={`font-medium ${
+                        <span className={`font-medium text-sm ${
                           isActive ? 'text-white' : 'text-gray-700 dark:text-gray-300'
                         }`}>
                           {item.label}
                         </span>
+                        
+                        {/* Effet de brillance au survol */}
+                        {!isActive && (
+                          <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        )}
                       </NavLink>
                     );
                   })}
@@ -177,14 +201,14 @@ const Layout = () => {
 
           {/* User Profile Section */}
           <div className="border-t border-gray-200/50 dark:border-gray-700/50 p-4">
-            <div className="flex items-center space-x-3 p-3 rounded-xl bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-700">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                <span className="text-white font-semibold text-sm">
+            <div className="flex items-center space-x-3 p-4 rounded-xl bg-gradient-to-r from-blue-50/80 to-purple-50/80 dark:from-gray-800/80 dark:to-gray-700/80 border border-gray-200/30 dark:border-gray-600/30">
+              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg">
+                <span className="text-white font-bold text-sm">
                   {user?.nom?.[0]}{user?.prenom?.[0]}
                 </span>
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">
                   {user?.prenom} {user?.nom}
                 </p>
                 <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
@@ -296,6 +320,26 @@ const Layout = () => {
                       <IconSettings className="w-4 h-4" />
                       <span>Paramètres</span>
                     </button>
+                    <button
+                      onClick={() => {
+                        setUserMenuOpen(false);
+                        setShowDiagnostic(true);
+                      }}
+                      className="flex items-center space-x-2 w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                    >
+                      <IconBug className="w-4 h-4" />
+                      <span>Diagnostic Navigateur</span>
+                    </button>
+                    <button
+                      onClick={() => {
+                        setUserMenuOpen(false);
+                        setShowTroubleshooting(true);
+                      }}
+                      className="flex items-center space-x-2 w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                    >
+                      <IconFileAnalytics className="w-4 h-4" />
+                      <span>Guide de Résolution</span>
+                    </button>
                     <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
                     <button
                       onClick={handleLogout}
@@ -325,6 +369,16 @@ const Layout = () => {
           className="fixed inset-0 z-40"
           onClick={() => setUserMenuOpen(false)}
         />
+      )}
+
+      {/* Browser Diagnostic Modal */}
+      {showDiagnostic && (
+        <BrowserDiagnostic onClose={() => setShowDiagnostic(false)} />
+      )}
+
+      {/* Troubleshooting Guide Modal */}
+      {showTroubleshooting && (
+        <TroubleshootingGuide onClose={() => setShowTroubleshooting(false)} />
       )}
     </div>
   );

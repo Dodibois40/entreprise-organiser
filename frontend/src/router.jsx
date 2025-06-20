@@ -7,6 +7,8 @@ import TaskList from './pages/task/TaskList';
 import TaskForm from './pages/task/TaskForm';
 import UserList from './pages/user/UserList';
 import UserForm from './pages/user/UserForm';
+import UsersList from './pages/users/UsersList';
+import UsersForm from './pages/users/UserForm';
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 import Profile from './pages/auth/Profile';
@@ -21,17 +23,18 @@ import Achats from './pages/Achats';
 import BdcList from './pages/achat/BdcList';
 import BdcForm from './pages/achat/BdcForm';
 import BdcDetails from './pages/achat/BdcDetails';
+import AchatForm from './pages/achats/AchatForm';
 import PointageCalendarView from './pages/pointage/PointageCalendarView';
 import PointageForm from './pages/pointage/PointageForm';
 import PointageValidation from './pages/pointage/PointageValidation';
 import PointageStats from './pages/pointage/PointageStats';
-import InventaireList from './pages/inventaire/InventaireList';
-import InventaireStats from './pages/inventaire/InventaireStats';
+// import InventaireList from './pages/inventaire/InventaireList'; // MODULE EN SOMMEIL
+// import InventaireStats from './pages/inventaire/InventaireStats'; // MODULE EN SOMMEIL
 import ParametresList from './pages/parametres/ParametresList';
 import ParametreForm from './pages/parametres/ParametreForm';
-import ArticlesList from './pages/articles/ArticlesList';
-import ArticleForm from './pages/articles/ArticleForm';
-import ArticleDetails from './pages/articles/ArticleDetails';
+// import ArticlesList from './pages/articles/ArticlesList'; // MODULE EN SOMMEIL
+// import ArticleForm from './pages/articles/ArticleForm'; // MODULE EN SOMMEIL
+// import ArticleDetails from './pages/articles/ArticleDetails'; // MODULE EN SOMMEIL
 import AnalysesAvancees from './pages/reporting/AnalysesAvancees';
 import Migration from './pages/Migration';
 import Notifications from './pages/Notifications';
@@ -39,9 +42,19 @@ import Pointages from './pages/Pointages';
 import AffairesList from './pages/affaires/AffairesList';
 import AffaireForm from './pages/affaires/AffaireForm';
 import AffaireDetails from './pages/affaires/AffaireDetails';
+import AffaireEstimationAchats from './pages/affaires/AffaireEstimationAchats';
+
+import AffaireAchatsUnifiedPage from './pages/affaires/AffaireAchatsUnifiedPage';
+import DevisList from './pages/devis/DevisList';
+import DevisForm from './pages/devis/DevisForm';
+import FournisseursList from './pages/fournisseurs/FournisseursList';
+import FournisseurForm from './pages/fournisseurs/FournisseurForm';
+
 import Planification from './pages/Planification';
 import Ressources from './pages/Ressources';
 import TempsPasse from './pages/TempsPasse';
+import FirebaseTestPage from './pages/test/FirebaseTestPage';
+import PdfTestDiagnostic from './components/test/PdfTestDiagnostic';
 
 // Composant pour protéger les routes
 const ProtectedRoute = ({ children }) => {
@@ -130,6 +143,13 @@ const Router = () => {
           <Route path="nouveau" element={<UserForm />} />
           <Route path=":id" element={<UserForm />} />
         </Route>
+
+        {/* Routes de gestion des utilisateurs/ouvriers */}
+        <Route path="users">
+          <Route index element={<UsersList />} />
+          <Route path="nouveau" element={<UsersForm />} />
+          <Route path=":id/modifier" element={<UsersForm />} />
+        </Route>
         
         {/* Routes de chantiers */}
         <Route path="chantiers" element={<Chantiers />} />
@@ -140,15 +160,36 @@ const Router = () => {
           <Route path="nouveau" element={<AffaireForm />} />
           <Route path=":id" element={<AffaireDetails />} />
           <Route path=":id/modifier" element={<AffaireForm />} />
+          <Route path=":id/estimation-achats" element={<AffaireEstimationAchats />} />
+
+          <Route path=":id/achats-unified" element={<AffaireAchatsUnifiedPage />} />
+        </Route>
+        
+        {/* Routes des devis */}
+        <Route path="devis">
+          <Route index element={<DevisList />} />
+          <Route path="nouveau" element={<DevisForm />} />
+          <Route path=":id/modifier" element={<DevisForm />} />
         </Route>
         
         {/* Routes d'achats et bons de commande */}
-        <Route path="achats" element={<Achats />} />
+        <Route path="achats">
+          <Route index element={<Achats />} />
+          <Route path="nouveau" element={<AchatForm />} />
+          <Route path=":id/modifier" element={<AchatForm />} />
+        </Route>
         <Route path="bdc">
           <Route index element={<BdcList />} />
           <Route path="nouveau" element={<BdcForm />} />
           <Route path=":id" element={<BdcDetails />} />
           <Route path=":id/modifier" element={<BdcForm />} />
+        </Route>
+        
+        {/* Routes des fournisseurs */}
+        <Route path="fournisseurs">
+          <Route index element={<FournisseursList />} />
+          <Route path="nouveau" element={<FournisseurForm />} />
+          <Route path=":id/modifier" element={<FournisseurForm />} />
         </Route>
         
         {/* Routes de Pointages - Page principale avec onglets intégrés */}
@@ -163,11 +204,11 @@ const Router = () => {
           <Route path="statistiques" element={<PointageStats />} />
         </Route>
         
-        {/* Routes d'inventaire */}
-        <Route path="inventaire">
+        {/* Routes d'inventaire - MODULE EN SOMMEIL */}
+        {/* <Route path="inventaire">
           <Route index element={<InventaireList />} />
           <Route path="stats" element={<InventaireStats />} />
-        </Route>
+        </Route> */}
         
         {/* Routes des paramètres */}
         <Route path="parametres">
@@ -176,13 +217,13 @@ const Router = () => {
           <Route path=":id/modifier" element={<ParametreForm />} />
         </Route>
         
-        {/* Routes des articles */}
-        <Route path="articles">
+        {/* Routes des articles - MODULE EN SOMMEIL */}
+        {/* <Route path="articles">
           <Route index element={<ArticlesList />} />
           <Route path="nouveau" element={<ArticleForm />} />
           <Route path=":id" element={<ArticleDetails />} />
           <Route path=":id/modifier" element={<ArticleForm />} />
-        </Route>
+        </Route> */}
         
         {/* Routes de reporting avancé */}
         <Route path="analyses-avancees" element={<AnalysesAvancees />} />
@@ -204,6 +245,12 @@ const Router = () => {
         
         {/* Routes de temps passé */}
         <Route path="temps-passe" element={<TempsPasse />} />
+        
+        {/* Route de test Firebase */}
+        <Route path="firebase-test" element={<FirebaseTestPage />} />
+        
+        {/* Route de diagnostic PDF */}
+        <Route path="pdf-diagnostic" element={<PdfTestDiagnostic />} />
       </Route>
       
       {/* Page 404 */}

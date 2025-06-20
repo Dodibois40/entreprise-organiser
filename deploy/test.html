@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Entreprise Organiser</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 50px; background: #f8f9fa; }
+        .container { background: white; padding: 40px; border-radius: 10px; max-width: 600px; margin: 0 auto; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h1 { color: #28a745; }
+        .status { background: #d4edda; color: #155724; padding: 15px; border-radius: 5px; margin: 20px 0; }
+        .btn { background: #007bff; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block; margin: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>✅ Test de Connexion O2Switch</h1>
+        <div class="status">
+            <strong>Statut :</strong> Serveur fonctionnel<br>
+            <strong>Date :</strong> <span id="date"></span><br>
+            <strong>URL :</strong> <span id="url"></span>
+        </div>
+        <p>Si vous voyez cette page, votre serveur O2Switch fonctionne correctement.</p>
+        <a href="/entreprise-organiser/" class="btn">Accéder au CRM</a>
+        <a href="/entreprise-organiser/index.html" class="btn">Index Direct</a>
+    </div>
+    
+    <script>
+        document.getElementById('date').textContent = new Date().toLocaleString('fr-FR');
+        document.getElementById('url').textContent = window.location.href;
+    </script>
+</body>
+</html>

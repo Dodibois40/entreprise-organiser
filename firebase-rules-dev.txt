@@ -1,0 +1,10 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /{allPaths=**} {
+      // RÈGLES TEMPORAIRES POUR LE DÉVELOPPEMENT
+      // ⚠️ À SÉCURISER AVANT LA PRODUCTION ⚠️
+      allow read, write: if true;
+    }
+  }
+} 

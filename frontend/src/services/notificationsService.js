@@ -1,25 +1,47 @@
-import api from './api';
+import api from './api.js';
 
-const notificationsService = {
-  // Obtenir toutes les notifications actives
+export const notificationsService = {
+  // Récupérer toutes les notifications
   async getNotifications() {
     try {
       const response = await api.get('/notifications');
       return response.data;
     } catch (error) {
       console.error('Erreur lors de la récupération des notifications:', error);
-      throw new Error(error.response?.data?.message || 'Erreur lors de la récupération des notifications');
+      throw error;
     }
   },
 
-  // Obtenir le nombre de notifications non lues
+  // Récupérer le nombre de notifications non lues
   async getUnreadCount() {
     try {
       const response = await api.get('/notifications/unread-count');
-      return response.data.count;
+      return response.data;
     } catch (error) {
       console.error('Erreur lors de la récupération du nombre de notifications:', error);
-      return 0; // Retourner 0 en cas d'erreur pour éviter de casser l'interface
+      throw error;
+    }
+  },
+
+  // Marquer une notification comme lue
+  async markAsRead(id) {
+    try {
+      const response = await api.patch(`/notifications/${id}/read`);
+      return response.data;
+    } catch (error) {
+      console.error('Erreur lors du marquage de la notification:', error);
+      throw error;
+    }
+  },
+
+  // Récupérer les statistiques des notifications
+  async getNotificationStats() {
+    try {
+      const response = await api.get('/notifications/stats');
+      return response.data;
+    } catch (error) {
+      console.error('Erreur lors de la récupération des statistiques:', error);
+      throw error;
     }
   },
 
@@ -31,17 +53,6 @@ const notificationsService = {
     } catch (error) {
       console.error(`Erreur lors de la récupération des notifications ${type}:`, error);
       throw new Error(error.response?.data?.message || 'Erreur lors de la récupération des notifications');
-    }
-  },
-
-  // Obtenir les statistiques des notifications
-  async getNotificationStats() {
-    try {
-      const response = await api.get('/notifications/stats');
-      return response.data;
-    } catch (error) {
-      console.error('Erreur lors de la récupération des statistiques:', error);
-      throw new Error(error.response?.data?.message || 'Erreur lors de la récupération des statistiques');
     }
   },
 
@@ -170,6 +181,4 @@ const notificationsService = {
     
     return notificationDate.toLocaleDateString('fr-FR');
   }
-};
-
-export default notificationsService; 
+}; 

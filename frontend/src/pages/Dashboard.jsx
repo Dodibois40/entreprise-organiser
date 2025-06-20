@@ -40,10 +40,11 @@ import {
   BarElement,
 } from 'chart.js';
 import CountUp from 'react-countup';
-import notificationsService from '../services/notificationsService';
-import reportingService from '../services/reportingService';
-import articlesService from '../services/articlesService';
-import affairesService from '../services/affairesService';
+import { notificationsService } from '@/services/notificationsService';
+import { reportingService } from '@/services/reportingService';
+// import articlesService from '@/services/articlesService'; // MODULE EN SOMMEIL
+import { affairesService } from '@/services/affairesService';
+import EstimationsAchatsWidget from '../components/dashboard/EstimationsAchatsWidget';
 
 // Enregistrement des composants Chart.js
 ChartJS.register(
@@ -64,7 +65,7 @@ const Dashboard = () => {
   const [dashboardData, setDashboardData] = useState({
     kpis: null,
     notifications: [],
-    inventaire: null,
+    // inventaire: null, // MODULE EN SOMMEIL
     affaires: null,
     alertes: []
   });
@@ -80,13 +81,13 @@ const Dashboard = () => {
         kpis,
         notifications,
         notificationStats,
-        inventaireStats,
+        // inventaireStats, // MODULE EN SOMMEIL
         affairesStats
       ] = await Promise.all([
         reportingService.getDashboardData(),
         notificationsService.getNotifications(5),
         notificationsService.getNotificationStats(),
-        reportingService.getInventaireStats(),
+        // reportingService.getInventaireStats(), // MODULE EN SOMMEIL
         affairesService.getAffaires({ limit: 10, sort: 'dateCreation', order: 'desc' })
       ]);
 
@@ -94,7 +95,7 @@ const Dashboard = () => {
         kpis,
         notifications,
         notificationStats,
-        inventaire: inventaireStats,
+        // inventaire: inventaireStats, // MODULE EN SOMMEIL
         affaires: affairesStats,
         alertes: notifications.filter(n => n.priority === 'urgent' || n.priority === 'high')
       });
@@ -232,8 +233,7 @@ const Dashboard = () => {
 
   const getNotificationIcon = (type) => {
     switch (type) {
-      case 'stock_faible':
-        return <IconPackage size={16} className="text-orange-600" />;
+      // case 'stock_faible': // MODULE EN SOMMEIL - supprimé
       case 'echeance_affaire':
         return <IconCalendarEvent size={16} className="text-blue-600" />;
       case 'bdc_en_attente':
@@ -290,7 +290,7 @@ const Dashboard = () => {
     );
   }
 
-  const { kpis, notifications, notificationStats, inventaire, affaires, alertes } = dashboardData;
+      const { kpis, notifications, notificationStats, /* inventaire, */ affaires, alertes } = dashboardData;
 
   return (
     <div className="space-y-8">
@@ -303,17 +303,39 @@ const Dashboard = () => {
           </p>
         </div>
         <div className="flex items-center space-x-3">
+          {/* Bouton Actualiser corrigé */}
           <button
             onClick={loadDashboardData}
             disabled={loading}
-            className="btn-modern btn-secondary"
+            className={`
+              inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg border transition-all duration-200 ease-in-out
+              ${loading 
+                ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed' 
+                : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50 hover:border-gray-400 active:bg-gray-100'
+              }
+              dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700
+              shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1
+            `}
+            type="button"
           >
-            <IconRefresh size={16} className={`mr-2 ${loading ? 'animate-spin' : ''}`} />
+            <IconRefresh 
+              size={16} 
+              className={`mr-2 ${loading ? 'animate-spin' : ''}`} 
+            />
             Actualiser
           </button>
+
+          {/* Bouton Analyses avancées corrigé */}
           <button
             onClick={() => navigate('/analyses-avancees')}
-            className="btn-modern btn-primary"
+            className="
+              inline-flex items-center px-4 py-2 text-sm font-medium text-white rounded-lg
+              bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800
+              border border-transparent transition-all duration-200 ease-in-out
+              shadow-sm hover:shadow-lg active:scale-95
+              focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1
+            "
+            type="button"
           >
             <IconChartBar size={16} className="mr-2" />
             Analyses avancées
@@ -476,8 +498,11 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Activité et projets récents */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      {/* Estimations d'achats et activité */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Widget Estimations d'Achats */}
+        <EstimationsAchatsWidget className="modern-card" />
+
         {/* Activité hebdomadaire */}
         <div className="modern-card p-6">
           <div className="mb-6">
@@ -488,9 +513,11 @@ const Dashboard = () => {
             <Bar data={activitiesData} options={chartOptions} />
           </div>
         </div>
+      </div>
 
-        {/* Projets récents */}
-        <div className="lg:col-span-2 modern-card p-6">
+      {/* Projets récents */}
+      <div className="grid grid-cols-1 gap-6">
+        <div className="modern-card p-6">
           <div className="flex items-center justify-between mb-6">
             <div>
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Projets récents</h3>
@@ -539,7 +566,7 @@ const Dashboard = () => {
       {/* Quick Actions */}
       <div className="modern-card p-6">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">Actions rapides</h3>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           <button
             onClick={() => navigate('/pointages')}
             className="flex flex-col items-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors group"
@@ -560,7 +587,8 @@ const Dashboard = () => {
             <span className="text-sm font-medium text-purple-700 dark:text-purple-300">Nouveau BDC</span>
           </button>
 
-          <button
+          {/* MODULE INVENTAIRE EN SOMMEIL */}
+          {/* <button
             onClick={() => navigate('/articles')}
             className="flex flex-col items-center p-4 bg-green-50 dark:bg-green-900/20 rounded-xl hover:bg-green-100 dark:hover:bg-green-900/30 transition-colors group"
           >
@@ -568,7 +596,7 @@ const Dashboard = () => {
               <IconPackage className="w-6 h-6 text-white" />
             </div>
             <span className="text-sm font-medium text-green-700 dark:text-green-300">Inventaire</span>
-          </button>
+          </button> */}
 
           <button
             onClick={() => navigate('/analyses-avancees')}
@@ -578,6 +606,16 @@ const Dashboard = () => {
               <IconChartBar className="w-6 h-6 text-white" />
             </div>
             <span className="text-sm font-medium text-orange-700 dark:text-orange-300">Analyses</span>
+          </button>
+
+          <button
+            onClick={() => navigate('/affaires/1/test-achats-reel')}
+            className="flex flex-col items-center p-4 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl hover:from-purple-100 hover:to-pink-100 dark:hover:from-purple-900/30 dark:hover:to-pink-900/30 transition-all group"
+          >
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+              <IconTarget className="w-6 h-6 text-white" />
+            </div>
+            <span className="text-sm font-medium bg-gradient-to-r from-purple-700 to-pink-700 dark:from-purple-300 dark:to-pink-300 bg-clip-text text-transparent">Test Interactif</span>
           </button>
         </div>
       </div>

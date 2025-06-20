@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "affaires" ADD COLUMN     "objectifHeuresPose" DOUBLE PRECISION NOT NULL DEFAULT 0,
+ADD COLUMN     "objectifHeuresSer" DOUBLE PRECISION NOT NULL DEFAULT 0;

@@ -5,7 +5,7 @@ import {
   deleteArticle,
   getArticlesStats,
   getArticlesStockFaible
-} from '../../services/articlesService';
+} from '@/services/articlesService';
 
 const ArticlesList = () => {
   const [articles, setArticles] = useState([]);

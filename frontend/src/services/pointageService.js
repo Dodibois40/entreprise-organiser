@@ -108,7 +108,11 @@ const pointageService = {
   getPointageById,
   updatePointage,
   deletePointage,
-  getPointagesStats
+  getPointagesStats,
+  // Alias pour compatibilité
+  getStats: async (periode) => {
+    return await getPointagesStats(periode);
+  }
 };
 
 export default pointageService; 

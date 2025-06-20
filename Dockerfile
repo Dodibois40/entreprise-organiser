@@ -57,7 +57,7 @@ ENV NODE_ENV=production
 ENV PORT=3001
 
 # Commande de démarrage
-CMD ["node", "dist/main"]
+CMD ["node", "dist/src/main.js"]
 
 # Stage 3: Serveur web pour le frontend
 FROM nginx:alpine AS frontend

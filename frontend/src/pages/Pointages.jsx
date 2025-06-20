@@ -13,7 +13,7 @@ import PointageForm from './pointage/PointageForm';
 import PointageCalendarView from './pointage/PointageCalendarView';
 import PointageStats from './pointage/PointageStats';
 import PointageValidation from './pointage/PointageValidation';
-import pointageService from '../services/pointageService';
+import pointageService from '@/services/pointageService';
 
 const Pointages = () => {
   const [activeTab, setActiveTab] = useState('calendar');

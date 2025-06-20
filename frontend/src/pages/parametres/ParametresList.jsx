@@ -4,7 +4,7 @@ import {
   getParametres, 
   deleteParametre, 
   initializeDefaultParameters 
-} from '../../services/parametresService';
+} from '@/services/parametresService';
 
 const ParametresList = () => {
   const [parametres, setParametres] = useState([]);

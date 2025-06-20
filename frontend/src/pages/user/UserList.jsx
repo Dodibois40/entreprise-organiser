@@ -60,7 +60,7 @@ const UserList = () => {
         <Title>Gestion des Collaborateurs</Title>
         
         <Button
-          leftIcon={<IconPlus size={16} />}
+          leftSection={<IconPlus size={16} />}
           onClick={() => navigate('/collaborateurs/nouveau')}
         >
           Nouveau Collaborateur

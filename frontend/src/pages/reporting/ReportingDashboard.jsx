@@ -7,12 +7,12 @@ import {
   getMargesAffaires,
   exportCsv,
   exportPdf 
-} from '../../services/reportingService';
-import { getAffaires } from '../../services/achatService';
+} from '@/services/reportingService';
+import { getAffaires } from '@/services/achatService';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { format, subMonths, startOfMonth, endOfMonth, startOfYear } from 'date-fns';

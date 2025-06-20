@@ -258,7 +258,7 @@ function Chantiers() {
       <Group position="apart" mb="lg">
         <Title>Gestion des Chantiers</Title>
         <Button 
-          leftIcon={<IconPlus size={18} />} 
+                      leftSection={<IconPlus size={18} />} 
           onClick={ajouterChantier}
         >
           Nouveau Chantier

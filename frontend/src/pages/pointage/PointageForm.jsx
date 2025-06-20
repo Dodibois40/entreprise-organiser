@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { createPointage, getPointageById, updatePointage } from '../../services/pointageService';
-import { getAffaires } from '../../services/achatService';
-import { Button } from '@/components/ui/Button';
+import { createPointage, getPointageById, updatePointage } from '@/services/pointageService';
+import { getAffaires } from '@/services/achatService';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';

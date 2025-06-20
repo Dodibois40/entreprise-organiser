@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { getPointages } from '../../services/pointageService';
-import { getAffaires } from '../../services/achatService'; // Pour filtrer par affaire
-import { Button } from '@/components/ui/Button';
+import { getPointages } from '@/services/pointageService';
+import { getAffaires } from '@/services/achatService'; // Pour filtrer par affaire
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
@@ -97,19 +97,28 @@ const PointageCalendarView = () => {
               <CardDescription>Cliquez sur une date pour ajouter un pointage ou sur un pointage pour le modifier.</CardDescription>
             </div>
             <div className="flex flex-wrap gap-2">
-              <Button asChild variant="default">
-                <Link to="/pointages/saisie">Saisir un pointage</Link>
-              </Button>
+              <Link 
+                to="/pointages/saisie"
+                className="btn-modern btn-primary inline-flex items-center justify-center px-4 py-2 text-sm font-medium"
+              >
+                Saisir un pointage
+              </Link>
               
               {canValidatePointages && (
-                <Button asChild variant="outline">
-                  <Link to="/pointages/validation">Valider les pointages</Link>
-                </Button>
+                <Link 
+                  to="/pointages/validation"
+                  className="btn-modern btn-secondary inline-flex items-center justify-center px-4 py-2 text-sm font-medium"
+                >
+                  Valider les pointages
+                </Link>
               )}
               
-              <Button asChild variant="outline">
-                <Link to="/pointages/statistiques">Statistiques</Link>
-              </Button>
+              <Link 
+                to="/pointages/statistiques"
+                className="btn-modern btn-secondary inline-flex items-center justify-center px-4 py-2 text-sm font-medium"
+              >
+                Statistiques
+              </Link>
             </div>
           </div>
         </CardHeader>

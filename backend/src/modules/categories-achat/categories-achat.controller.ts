@@ -3,7 +3,7 @@ import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagg
 import { CategoriesAchatService } from './categories-achat.service';
 import { CategorieAchatDto } from './dto/categorie-achat.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { CategorieAchat } from '../../../generated/prisma';
+import { CategorieAchat } from '@prisma/client';
 // Importer les rôles si nécessaire pour protéger la route
 // import { Roles } from '../auth/decorators/roles.decorator';
 // import { RoleEnum } from '../../generated/prisma';

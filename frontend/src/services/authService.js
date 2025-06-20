@@ -16,14 +16,17 @@ const authService = {
     try {
       const { data } = await API.post('/auth/register', userData);
       
-      // Vérifier que les données contiennent bien un token et un utilisateur
-      if (data && data.token) {
-        // Stocker les informations dans le localStorage
-        localStorage.setItem(AUTH_TOKEN_KEY, data.token);
-        localStorage.setItem(USER_DATA_KEY, JSON.stringify(data.user || {}));
-        return data;
+      // Adapter la réponse du backend (accessToken)
+      const token = data.accessToken || data.token;
+      const user = data.user;
+      
+      if (token && user) {
+        // Stocker les informations
+        localStorage.setItem(AUTH_TOKEN_KEY, token);
+        localStorage.setItem(USER_DATA_KEY, JSON.stringify(user));
+        return { token, user };
       } else {
-        throw new Error('Réponse du serveur invalide: token manquant');
+        throw new Error('Réponse du serveur invalide: token ou utilisateur manquant');
       }
     } catch (error) {
       console.error('Erreur lors de l\'inscription:', error);
@@ -46,9 +49,10 @@ const authService = {
       const user = data.user;
       
       if (token && user) {
-        // Stocker les informations dans le localStorage
+        // Stocker les informations
         localStorage.setItem(AUTH_TOKEN_KEY, token);
         localStorage.setItem(USER_DATA_KEY, JSON.stringify(user));
+        
         return { token, user };
       } else {
         throw new Error('Réponse du serveur invalide: token ou utilisateur manquant');
@@ -73,7 +77,8 @@ const authService = {
    * @returns {Boolean} - true si authentifié
    */
   isAuthenticated: () => {
-    return !!localStorage.getItem(AUTH_TOKEN_KEY);
+    const token = localStorage.getItem(AUTH_TOKEN_KEY);
+    return !!token;
   },
   
   /**
@@ -120,7 +125,7 @@ const authService = {
   updateProfile: async (userData) => {
     try {
       const { data } = await API.put('/auth/profile', userData);
-      // Mettre à jour les données dans le localStorage
+      // Mettre à jour les données
       if (data && (data.user || data)) {
         localStorage.setItem(USER_DATA_KEY, JSON.stringify(data.user || data));
       }
@@ -198,7 +203,7 @@ const authService = {
   },
   
   /**
-   * Demande un nouvel email de vérification
+   * Renvoie un email de vérification
    * @returns {Promise} - Promesse avec confirmation d'envoi
    */
   resendVerificationEmail: async () => {
@@ -206,8 +211,8 @@ const authService = {
       const { data } = await API.post('/auth/resend-verification');
       return data;
     } catch (error) {
-      console.error('Erreur lors de l\'envoi de l\'email de vérification:', error);
-      const errorMessage = error.response?.data?.message || error.message || 'Erreur lors de l\'envoi de l\'email de vérification';
+      console.error('Erreur lors du renvoi de l\'email de vérification:', error);
+      const errorMessage = error.response?.data?.message || error.message || 'Erreur lors du renvoi de l\'email de vérification';
       throw new Error(errorMessage);
     }
   }

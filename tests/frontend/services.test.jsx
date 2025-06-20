@@ -6,7 +6,7 @@
 global.fetch = jest.fn();
 
 // Import des services
-import affairesService from '../../frontend/src/services/affairesService';
+import { affairesService } from '../../frontend/src/services/affairesService';
 import authService from '../../frontend/src/services/authService';
 
 describe('Services Frontend', () => {

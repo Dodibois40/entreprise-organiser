@@ -3,8 +3,8 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { IconLock, IconArrowLeft, IconCheck, IconX, IconEye, IconEyeOff } from '@tabler/icons-react';
 import { toast } from 'sonner';
 import { useAuth } from '../../contexts/AuthContext';
-import authService from '../../services/authService';
-import { Button } from '@/components/ui/Button';
+import authService from '@/services/authService';
+import { Button } from '@/components/ui/button';
 
 // Évaluation de la force du mot de passe
 const PasswordStrength = ({ password }) => {

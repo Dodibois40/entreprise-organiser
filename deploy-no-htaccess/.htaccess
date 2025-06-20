@@ -1,0 +1,20 @@
+# Configuration MINIMALE - Juste les types de fichiers
+# Pas de réécriture d'URL = Pas d'erreur 500
+
+# Types MIME essentiels
+AddType text/css .css
+AddType application/javascript .js
+AddType application/json .json
+AddType image/svg+xml .svg
+
+# Cache pour les assets (optionnel)
+<FilesMatch "\.(css|js|svg|png|jpg|jpeg|gif)$">
+    ExpiresActive On
+    ExpiresDefault "access plus 1 month"
+</FilesMatch>
+
+# Sécurité de base
+<Files ".htaccess">
+    Order allow,deny
+    Deny from all
+</Files>

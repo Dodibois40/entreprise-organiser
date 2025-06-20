@@ -1,7 +1,7 @@
 import { createContext, useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { notifications } from '@mantine/notifications';
-import authService from '../services/authService';
+import { toast } from 'sonner';
+import authService from '@/services/authService';
 
 // Créer le contexte
 const AuthContext = createContext();
@@ -60,20 +60,16 @@ export const AuthProvider = ({ children }) => {
       setUser(response.user);
       setIsAuthenticated(true);
       
-      notifications.show({
-        title: 'Connexion réussie',
-        message: `Bienvenue, ${response.user.prenom} ${response.user.nom}`,
-        color: 'green',
+      toast.success('Connexion réussie', {
+        description: `Bienvenue, ${response.user.prenom} ${response.user.nom}`,
       });
       
       navigate('/');
       return response;
     } catch (error) {
       const errorMessage = error.message || 'Erreur lors de la connexion';
-      notifications.show({
-        title: 'Erreur de connexion',
-        message: errorMessage,
-        color: 'red',
+      toast.error('Erreur de connexion', {
+        description: errorMessage,
       });
       throw error;
     } finally {
@@ -90,20 +86,16 @@ export const AuthProvider = ({ children }) => {
       setUser(response.user);
       setIsAuthenticated(true);
       
-      notifications.show({
-        title: 'Inscription réussie',
-        message: `Bienvenue, ${response.user.prenom} ${response.user.nom}`,
-        color: 'green',
+      toast.success('Inscription réussie', {
+        description: `Bienvenue, ${response.user.prenom} ${response.user.nom}`,
       });
       
       navigate('/');
       return response;
     } catch (error) {
       const errorMessage = error.message || 'Erreur lors de l\'inscription';
-      notifications.show({
-        title: 'Erreur d\'inscription',
-        message: errorMessage,
-        color: 'red',
+      toast.error('Erreur d\'inscription', {
+        description: errorMessage,
       });
       throw error;
     } finally {
@@ -127,19 +119,15 @@ export const AuthProvider = ({ children }) => {
       
       setUser(response.user);
       
-      notifications.show({
-        title: 'Profil mis à jour',
-        message: 'Vos informations ont été mises à jour avec succès',
-        color: 'green',
+      toast.success('Profil mis à jour', {
+        description: 'Vos informations ont été mises à jour avec succès',
       });
       
       return response;
     } catch (error) {
       const errorMessage = error.message || 'Erreur lors de la mise à jour du profil';
-      notifications.show({
-        title: 'Erreur',
-        message: errorMessage,
-        color: 'red',
+      toast.error('Erreur', {
+        description: errorMessage,
       });
       throw error;
     } finally {

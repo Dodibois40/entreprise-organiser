@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { IconAt, IconArrowLeft, IconAlertCircle } from '@tabler/icons-react';
 import { toast } from 'sonner';
-import authService from '../../services/authService';
-import { Button } from '@/components/ui/Button';
+import authService from '@/services/authService';
+import { Button } from '@/components/ui/button';
 
 const ForgotPassword = () => {
   const [loading, setLoading] = useState(false);

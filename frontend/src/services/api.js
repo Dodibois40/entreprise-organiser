@@ -1,120 +1,51 @@
 import axios from 'axios';
-import { notifications } from '@mantine/notifications';
+import { toast } from 'sonner';
 
-// Définir l'URL de base de l'API - Pointer directement vers le backend
-const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
-
-// Cache simple pour les requêtes GET
-const cache = new Map();
-const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+// URL de base AVEC préfixe API car le backend utilise un préfixe global
+const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 
 const API = axios.create({
   baseURL,
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 10000, // Timeout de 10 secondes
+  timeout: 10000,
 });
 
-// Fonction pour gérer le cache
-const getCachedData = (url) => {
-  const cached = cache.get(url);
-  if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
-    return cached.data;
-  }
-  return null;
-};
-
-const setCachedData = (url, data) => {
-  cache.set(url, {
-    data,
-    timestamp: Date.now(),
-  });
-};
-
-// Ajouter l'intercepteur pour les requêtes
+// Intercepteur requêtes
 API.interceptors.request.use(
   (config) => {
-    // Ajouter le token d'authentification si disponible
     const token = localStorage.getItem('auth_token');
-    
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-
-    // Log pour debug - sera retiré plus tard
-    console.log('API Request:', config.method?.toUpperCase(), config.url, config.baseURL);
-
-    // Vérifier le cache pour les requêtes GET
-    if (config.method === 'get') {
-      const cachedData = getCachedData(config.url);
-      if (cachedData) {
-        return Promise.reject({
-          __CACHE_HIT__: true,
-          data: cachedData,
-        });
-      }
-    }
-    
     return config;
   },
-  (error) => {
-    console.error('Erreur de requête API:', error);
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
-// Ajouter l'intercepteur pour les réponses
+// Intercepteur réponses
 API.interceptors.response.use(
-  (response) => {
-    // Log pour debug - sera retiré plus tard
-    console.log('API Response:', response.status, response.config.url);
-    
-    // Mettre en cache les réponses GET
-    if (response.config.method === 'get') {
-      setCachedData(response.config.url, response.data);
-    }
-    return response;
-  },
+  (response) => response,
   (error) => {
-    // Gérer les hits de cache
-    if (error.__CACHE_HIT__) {
-      return Promise.resolve({ data: error.data });
+    if (error.response?.status === 401) {
+      localStorage.removeItem('auth_token');
+      localStorage.removeItem('user_data');
+      if (!window.location.pathname.includes('/auth/')) {
+        window.location.href = '/auth/login';
+      }
     }
-
-    // Log pour debug
-    console.error('API Error:', error.response?.status, error.config?.url, error.message);
-
-    // Gérer les erreurs de timeout
-    if (error.code === 'ECONNABORTED') {
-      notifications.show({
-        title: 'Erreur de connexion',
-        message: 'La requête a pris trop de temps. Veuillez réessayer.',
-        color: 'red',
-      });
-    }
-
-    // Gérer les erreurs de réseau
-    if (!error.response) {
-      notifications.show({
-        title: 'Erreur de connexion',
-        message: 'Impossible de se connecter au serveur. Vérifiez votre connexion internet.',
-        color: 'red',
-      });
-    }
-
     return Promise.reject(error);
   }
 );
 
-// Fonction pour vider le cache
+// Fonctions de cache (pour compatibilité)
 export const clearCache = () => {
-  cache.clear();
+  console.log('Cache cleared');
 };
 
-// Fonction pour vider le cache d'une URL spécifique
 export const clearCacheForUrl = (url) => {
-  cache.delete(url);
+  console.log('Cache cleared for URL:', url);
 };
 
-export default API; 
+export default API;

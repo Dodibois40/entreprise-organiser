@@ -11,9 +11,9 @@ import {
   Space, 
   useMantineTheme
 } from '@mantine/core';
-import { IconFileInvoice, IconShoppingCart, IconCoin, IconChartBar } from '@tabler/icons-react';
+import { IconFileInvoice, IconShoppingCart, IconCoin, IconChartBar, IconReceipt } from '@tabler/icons-react';
 import CountUp from 'react-countup';
-import { getBdcs } from '../services/achatService';
+import { getBdcs } from '@/services/achatService';
 
 const StatsCard = ({ title, value, icon, color }) => {
   const theme = useMantineTheme();
@@ -22,7 +22,16 @@ const StatsCard = ({ title, value, icon, color }) => {
     <Card shadow="sm" p="lg" radius="md" withBorder>
       <Group>
         {icon && (
-          <div style={{ color, backgroundColor: theme.fn.rgba(color, 0.1), borderRadius: '50%', width: 48, height: 48, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ 
+            color, 
+            backgroundColor: `${color}20`, // Utilisation de la transparence hexadécimale
+            borderRadius: '50%', 
+            width: 48, 
+            height: 48, 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center' 
+          }}>
             {icon}
           </div>
         )}
@@ -118,7 +127,7 @@ const Achats = () => {
           component={Link} 
           to="/bdc" 
           variant="filled" 
-          leftIcon={<IconFileInvoice size={20} />}
+          leftSection={<IconFileInvoice size={20} />}
         >
           Gérer les bons de commande
         </Button>
@@ -126,9 +135,18 @@ const Achats = () => {
           component={Link} 
           to="/bdc/nouveau" 
           variant="outline" 
-          leftIcon={<IconShoppingCart size={20} />}
+          leftSection={<IconShoppingCart size={20} />}
         >
           Nouveau bon de commande
+        </Button>
+        <Button 
+          component={Link} 
+          to="/achats/nouveau" 
+          variant="gradient"
+          gradient={{ from: 'teal', to: 'blue', deg: 60 }}
+          leftSection={<IconReceipt size={20} />}
+        >
+          Créer une facture d'achat
         </Button>
       </Group>
     </Container>

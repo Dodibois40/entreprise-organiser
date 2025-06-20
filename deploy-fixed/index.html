@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRM Entreprise Organiser</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 2.5rem;
+        }
+        .status {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .error {
+            color: #dc3545;
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+        }
+        .success {
+            color: #155724;
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+        }
+        .btn {
+            background: #007bff;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin: 10px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn:hover {
+            background: #0056b3;
+        }
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #007bff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏢 CRM Entreprise Organiser</h1>
+        
+        <div id="status" class="status">
+            <div class="loading"></div>
+            Chargement du CRM...
+        </div>
+        
+        <div id="content" style="display:none;">
+            <p>Bienvenue dans votre CRM d'entreprise !</p>
+            <a href="#" class="btn" onclick="showLogin()">Se connecter</a>
+            <a href="static.html" class="btn">Version statique</a>
+        </div>
+        
+        <div id="error" style="display:none;" class="status error">
+            <h3>⚠️ Problème de compatibilité détecté</h3>
+            <p>Votre hébergeur O2Switch bloque le chargement des modules JavaScript.</p>
+            <p><strong>Solutions :</strong></p>
+            <ul style="text-align: left;">
+                <li>Utiliser la <a href="static.html">version statique</a></li>
+                <li>Accéder via l'URL alternative</li>
+                <li>Contacter le support O2Switch</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Détection de compatibilité
+        function checkCompatibility() {
+            try {
+                // Test de chargement des modules
+                const script = document.createElement('script');
+                script.type = 'module';
+                script.textContent = 'console.log("Module support OK");';
+                document.head.appendChild(script);
+                
+                setTimeout(() => {
+                    document.getElementById('status').style.display = 'none';
+                    document.getElementById('content').style.display = 'block';
+                }, 1000);
+                
+            } catch (error) {
+                console.error('Erreur de compatibilité:', error);
+                showError();
+            }
+        }
+        
+        function showError() {
+            document.getElementById('status').style.display = 'none';
+            document.getElementById('error').style.display = 'block';
+        }
+        
+        function showLogin() {
+            alert('Fonctionnalité de connexion en cours de développement.\nUtilisez la version statique pour le moment.');
+        }
+        
+        // Démarrage
+        setTimeout(checkCompatibility, 500);
+        
+        // Fallback après 3 secondes
+        setTimeout(() => {
+            if (document.getElementById('content').style.display === 'none' && 
+                document.getElementById('error').style.display === 'none') {
+                showError();
+            }
+        }, 3000);
+    </script>
+</body>
+</html>

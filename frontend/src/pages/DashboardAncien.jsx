@@ -15,7 +15,7 @@ import {
 } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import CountUp from 'react-countup';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 
 // Composant pour les statistiques avec animation
 const StatCard = ({ title, value, icon, color }) => {

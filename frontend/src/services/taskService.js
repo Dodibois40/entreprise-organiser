@@ -22,7 +22,7 @@ const taskService = {
       });
       
       const queryString = queryParams.toString();
-      const url = `/api/tasks${queryString ? `?${queryString}` : ''}`;
+      const url = `/tasks${queryString ? `?${queryString}` : ''}`;
       
       return await API.get(url);
     } catch (error) {
@@ -37,7 +37,7 @@ const taskService = {
    */
   getTaskById: async (id) => {
     try {
-      return await API.get(`/api/tasks/${id}`);
+      return await API.get(`/tasks/${id}`);
     } catch (error) {
       throw error;
     }
@@ -50,7 +50,7 @@ const taskService = {
    */
   createTask: async (taskData) => {
     try {
-      return await API.post('/api/tasks', taskData);
+      return await API.post('/tasks', taskData);
     } catch (error) {
       throw error;
     }
@@ -64,7 +64,7 @@ const taskService = {
    */
   updateTask: async (id, taskData) => {
     try {
-      return await API.put(`/api/tasks/${id}`, taskData);
+      return await API.put(`/tasks/${id}`, taskData);
     } catch (error) {
       throw error;
     }
@@ -77,7 +77,7 @@ const taskService = {
    */
   deleteTask: async (id) => {
     try {
-      return await API.delete(`/api/tasks/${id}`);
+      return await API.delete(`/tasks/${id}`);
     } catch (error) {
       throw error;
     }
@@ -89,7 +89,7 @@ const taskService = {
    */
   getTasksStats: async () => {
     try {
-      return await API.get('/api/tasks/stats');
+      return await API.get('/tasks/stats');
     } catch (error) {
       throw error;
     }

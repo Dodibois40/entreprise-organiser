@@ -1,85 +1,96 @@
-import api from './api';
+import api from './api.js';
 
-const AFFAIRES_ENDPOINT = '/affaires';
+const AFFAIRES_ENDPOINTS = '/affaires';
 
 // Service pour la gestion des affaires
 const affairesService = {
   // Obtenir toutes les affaires avec filtres et pagination
   async getAffaires(params = {}) {
     try {
-      const response = await api.get(AFFAIRES_ENDPOINT, { params });
+      const response = await api.get(AFFAIRES_ENDPOINTS, { params });
       return response.data;
     } catch (error) {
       console.error('Erreur lors de la récupération des affaires:', error);
-      throw new Error(error.response?.data?.message || 'Erreur lors de la récupération des affaires');
+      throw error;
     }
   },
 
   // Obtenir une affaire par ID
-  async getAffaire(id) {
+  async getAffaireById(id) {
     try {
-      const response = await api.get(`${AFFAIRES_ENDPOINT}/${id}`);
+      const response = await api.get(`${AFFAIRES_ENDPOINTS}/${id}`);
       return response.data;
     } catch (error) {
-      console.error('Erreur lors de la récupération de l\'affaire:', error);
-      throw new Error(error.response?.data?.message || 'Affaire non trouvée');
+      console.error(`Erreur lors de la récupération de l'affaire ${id}:`, error);
+      throw error;
     }
   },
 
   // Créer une nouvelle affaire
-  async createAffaire(affaireData) {
+  async createAffaire(data) {
     try {
-      const response = await api.post(AFFAIRES_ENDPOINT, affaireData);
+      const response = await api.post(AFFAIRES_ENDPOINTS, data);
       return response.data;
     } catch (error) {
       console.error('Erreur lors de la création de l\'affaire:', error);
-      throw new Error(error.response?.data?.message || 'Erreur lors de la création de l\'affaire');
+      throw error;
     }
   },
 
   // Mettre à jour une affaire
-  async updateAffaire(id, affaireData) {
+  async updateAffaire(id, data) {
     try {
-      const response = await api.patch(`${AFFAIRES_ENDPOINT}/${id}`, affaireData);
+      const response = await api.patch(`${AFFAIRES_ENDPOINTS}/${id}`, data);
       return response.data;
     } catch (error) {
-      console.error('Erreur lors de la mise à jour de l\'affaire:', error);
-      throw new Error(error.response?.data?.message || 'Erreur lors de la mise à jour de l\'affaire');
+      console.error(`Erreur lors de la mise à jour de l'affaire ${id}:`, error);
+      throw error;
     }
   },
 
   // Supprimer une affaire
   async deleteAffaire(id) {
     try {
-      await api.delete(`${AFFAIRES_ENDPOINT}/${id}`);
-      return true;
+      const response = await api.delete(`${AFFAIRES_ENDPOINTS}/${id}`);
+      return response.data;
     } catch (error) {
-      console.error('Erreur lors de la suppression de l\'affaire:', error);
-      throw new Error(error.response?.data?.message || 'Erreur lors de la suppression de l\'affaire');
+      console.error(`Erreur lors de la suppression de l'affaire ${id}:`, error);
+      throw error;
+    }
+  },
+
+  // Dupliquer une affaire avec un nouveau numéro
+  async duplicateAffaire(id) {
+    try {
+      const response = await api.post(`${AFFAIRES_ENDPOINTS}/${id}/duplicate`);
+      return response.data;
+    } catch (error) {
+      console.error(`Erreur lors de la duplication de l'affaire ${id}:`, error);
+      throw error;
     }
   },
 
   // Obtenir les statistiques globales
   async getGlobalStats() {
     try {
-      const response = await api.get(`${AFFAIRES_ENDPOINT}/stats`);
+      const response = await api.get(`${AFFAIRES_ENDPOINTS}/stats`);
       return response.data;
     } catch (error) {
       console.error('Erreur lors de la récupération des statistiques:', error);
-      throw new Error(error.response?.data?.message || 'Erreur lors de la récupération des statistiques');
+      throw error;
     }
   },
 
   // Obtenir les affaires par statut
   async getAffairesByStatus(statut) {
     try {
-      const response = await api.get(AFFAIRES_ENDPOINT, {
+      const response = await api.get(AFFAIRES_ENDPOINTS, {
         params: { statut }
       });
       return response.data;
     } catch (error) {
       console.error('Erreur lors de la récupération des affaires par statut:', error);
-      throw new Error(error.response?.data?.message || 'Erreur lors de la récupération des affaires');
+      throw error;
     }
   },
 
@@ -87,7 +98,7 @@ const affairesService = {
   async getAffairesEnRetard() {
     try {
       const today = new Date();
-      const response = await api.get(AFFAIRES_ENDPOINT, {
+      const response = await api.get(AFFAIRES_ENDPOINTS, {
         params: {
           dateCloturePrevue_lt: today.toISOString(),
           statut_ne: 'TERMINE'
@@ -96,74 +107,70 @@ const affairesService = {
       return response.data;
     } catch (error) {
       console.error('Erreur lors de la récupération des affaires en retard:', error);
-      throw new Error(error.response?.data?.message || 'Erreur lors de la récupération des affaires en retard');
+      throw error;
     }
   },
 
   // Obtenir le chiffre d'affaires par période
   async getChiffreAffaires(dateDebut, dateFin) {
     try {
-      const response = await api.get(`${AFFAIRES_ENDPOINT}/chiffre-affaires`, {
+      const response = await api.get(`${AFFAIRES_ENDPOINTS}/chiffre-affaires`, {
         params: { dateDebut, dateFin }
       });
       return response.data;
     } catch (error) {
       console.error('Erreur lors de la récupération du chiffre d\'affaires:', error);
-      throw new Error(error.response?.data?.message || 'Erreur lors de la récupération du chiffre d\'affaires');
+      throw error;
     }
   },
 
   // Clôturer une affaire
   async cloturerAffaire(id, donneesCloture = {}) {
     try {
-      const response = await api.patch(`${AFFAIRES_ENDPOINT}/${id}/cloturer`, donneesCloture);
+      const response = await api.patch(`${AFFAIRES_ENDPOINTS}/${id}/cloturer`, donneesCloture);
       return response.data;
     } catch (error) {
       console.error('Erreur lors de la clôture de l\'affaire:', error);
-      throw new Error(error.response?.data?.message || 'Erreur lors de la clôture de l\'affaire');
+      throw error;
     }
   },
 
   // Obtenir les affaires du client
   async getAffairesClient(client) {
     try {
-      const response = await api.get(AFFAIRES_ENDPOINT, {
+      const response = await api.get(AFFAIRES_ENDPOINTS, {
         params: { client }
       });
       return response.data;
     } catch (error) {
       console.error('Erreur lors de la récupération des affaires du client:', error);
-      throw new Error(error.response?.data?.message || 'Erreur lors de la récupération des affaires du client');
+      throw error;
     }
   },
 
   // Rechercher des affaires
   async searchAffaires(query) {
     try {
-      const response = await api.get(`${AFFAIRES_ENDPOINT}/search`, {
+      const response = await api.get(`${AFFAIRES_ENDPOINTS}/search`, {
         params: { q: query }
       });
       return response.data;
     } catch (error) {
       console.error('Erreur lors de la recherche d\'affaires:', error);
-      throw new Error(error.response?.data?.message || 'Erreur lors de la recherche d\'affaires');
+      throw error;
     }
   },
 
   // Obtenir les dernières affaires modifiées
-  async getAffairesRecentes(limite = 10) {
+  async getRecentAffaires(limit = 5) {
     try {
-      const response = await api.get(AFFAIRES_ENDPOINT, {
-        params: {
-          limit: limite,
-          sort: 'dateModification',
-          order: 'desc'
-        }
+      const response = await api.get(`${AFFAIRES_ENDPOINTS}/recent`, { 
+        params: { limit } 
       });
       return response.data;
     } catch (error) {
       console.error('Erreur lors de la récupération des affaires récentes:', error);
-      throw new Error(error.response?.data?.message || 'Erreur lors de la récupération des affaires récentes');
+      throw error;
     }
   },
 
@@ -218,7 +225,127 @@ const affairesService = {
       default:
         return 0;
     }
+  },
+
+  // Mettre à jour les données réelles d'une affaire
+  async updateAffaireReel(id, reelData) {
+    try {
+      const response = await api.patch(`${AFFAIRES_ENDPOINTS}/${id}/reel`, reelData);
+      return response.data;
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour des données réelles:', error);
+      throw error;
+    }
+  },
+
+  // Calculer automatiquement les données réelles
+  async calculateRealData(id) {
+    try {
+      const response = await api.post(`${AFFAIRES_ENDPOINTS}/${id}/calculate-real`);
+      return response.data;
+    } catch (error) {
+      console.error('Erreur lors du calcul des données réelles:', error);
+      throw error;
+    }
+  },
+
+  // Obtenir les statistiques comparatives (Objectif vs Réel)
+  async getComparativeStats(id) {
+    try {
+      const response = await api.get(`${AFFAIRES_ENDPOINTS}/${id}/comparative-stats`);
+      return response.data;
+    } catch (error) {
+      console.error('Erreur lors de la récupération des statistiques comparatives:', error);
+      throw error;
+    }
+  },
+
+  // Formater les pourcentages d'écart
+  formatEcartPercentage(reel, objectif) {
+    if (!objectif || objectif === 0) return 'N/A';
+    const ecart = ((reel - objectif) / objectif) * 100;
+    const sign = ecart >= 0 ? '+' : '';
+    return `${sign}${ecart.toFixed(1)}%`;
+  },
+
+  // Obtenir la couleur selon l'écart
+  getEcartColor(reel, objectif) {
+    if (!objectif || objectif === 0) return 'text-gray-500';
+    const ecart = ((reel - objectif) / objectif) * 100;
+    
+    if (ecart > 10) return 'text-red-600'; // Dépassement important
+    if (ecart > 0) return 'text-orange-600'; // Léger dépassement
+    if (ecart > -10) return 'text-green-600'; // Dans les clous
+    return 'text-blue-600'; // Sous-consommation importante
+  },
+
+  // Obtenir la situation financière complète (incluant les coûts des phases)
+  async getFinancialSituation(id) {
+    try {
+      const response = await api.get(`${AFFAIRES_ENDPOINTS}/${id}/financial-situation`);
+      return response.data;
+    } catch (error) {
+      console.error('Erreur lors de la récupération de la situation financière:', error);
+      throw error;
+    }
+  },
+
+  // Calculer les coûts totaux des phases
+  async getPhasesCosts(id) {
+    try {
+      const response = await api.get(`${AFFAIRES_ENDPOINTS}/${id}/phases-costs`);
+      return response.data;
+    } catch (error) {
+      console.error('Erreur lors du calcul des coûts des phases:', error);
+      throw error;
+    }
+  },
+
+  // Récupérer les achats par catégorie (estimé vs réel)
+  async getAchatsParCategorie(affaireId) {
+    try {
+      const response = await api.get(`${AFFAIRES_ENDPOINTS}/${affaireId}/achats-categorie`);
+      return response.data;
+    } catch (error) {
+      console.error('Erreur lors de la récupération des achats par catégorie:', error);
+      throw error;
+    }
+  },
+
+  // Mettre à jour les estimations d'achats par catégorie
+  async updateEstimationsAchatCategorie(affaireId, estimations) {
+    try {
+      const response = await api.put(`${AFFAIRES_ENDPOINTS}/${affaireId}/estimations-achat-categorie`, {
+        estimations
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour des estimations par catégorie:', error);
+      throw error;
+    }
+  },
+
+  // Calculer les coûts d'une affaire
+  async calculateCosts(id) {
+    try {
+      const response = await api.post(`${AFFAIRES_ENDPOINTS}/${id}/calculate-costs`);
+      return response.data;
+    } catch (error) {
+      console.error(`Erreur lors du calcul des coûts de l'affaire ${id}:`, error);
+      throw error;
+    }
+  },
+
+  // Changer le statut d'une affaire
+  async changeStatus(id, status) {
+    try {
+      const response = await api.patch(`${AFFAIRES_ENDPOINTS}/${id}/status`, { status });
+      return response.data;
+    } catch (error) {
+      console.error(`Erreur lors du changement de statut de l'affaire ${id}:`, error);
+      throw error;
+    }
   }
 };
 
-export default affairesService; 
+export { affairesService }; 

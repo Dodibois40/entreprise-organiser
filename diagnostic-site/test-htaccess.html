@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test .htaccess</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        .status { padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .ok { background: #d4edda; color: #155724; }
+        .warning { background: #fff3cd; color: #856404; }
+    </style>
+</head>
+<body>
+    <h1>🔧 Test Configuration .htaccess</h1>
+    
+    <div class="status ok">
+        <strong>✅ Fichier accessible</strong><br>
+        Le .htaccess ne bloque pas l'accès aux fichiers HTML
+    </div>
+    
+    <div class="status warning">
+        <strong>⚠️ À vérifier</strong><br>
+        Si vous voyez cette page, les règles de réécriture fonctionnent partiellement
+    </div>
+    
+    <h3>🧪 Tests supplémentaires :</h3>
+    <ul>
+        <li><a href="inexistant">Test redirection vers fichier inexistant</a></li>
+        <li><a href="app/test">Test route SPA</a></li>
+        <li><a href="api/test">Test route API</a></li>
+    </ul>
+</body>
+</html>

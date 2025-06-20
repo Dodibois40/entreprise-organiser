@@ -11,7 +11,7 @@ import {
   IconX,
   IconRefresh
 } from '@tabler/icons-react';
-import notificationsService from '../services/notificationsService';
+import { notificationsService } from '@/services/notificationsService';
 
 const NotificationCenter = () => {
   const [notifications, setNotifications] = useState([]);

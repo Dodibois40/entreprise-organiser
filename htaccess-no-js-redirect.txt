@@ -1,0 +1,30 @@
+# STOP REDIRECTION DES FICHIERS JS !
+# Configuration spéciale pour O2Switch
+
+# Types MIME ABSOLUS
+AddType application/javascript .js
+AddType text/css .css
+AddType application/json .json
+
+# RÈGLE ABSOLUE : NE JAMAIS TOUCHER AUX FICHIERS .js
+RewriteEngine On
+RewriteBase /entreprise-organiser/
+
+# PRIORITÉ ABSOLUE : Fichiers assets (JS, CSS, etc.)
+RewriteRule ^assets/.*\.(js|css|json)$ - [L,E=no-gzip:1]
+
+# Autres fichiers statiques
+RewriteRule ^.*\.(js|css|json|svg|png|jpg|jpeg|gif|ico|woff2)$ - [L]
+
+# SPA redirect SEULEMENT pour les vraies routes (pas de fichiers)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} !^/entreprise-organiser/assets/
+RewriteCond %{REQUEST_URI} !\.(js|css|json|svg|png|jpg|jpeg|gif|ico|woff2)$
+RewriteRule ^(.*)$ index.html [L]
+
+# Headers forcés pour JavaScript
+<FilesMatch "\.js$">
+    Header set Content-Type "application/javascript"
+    Header unset Content-Encoding
+</FilesMatch>

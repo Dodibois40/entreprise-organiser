@@ -44,8 +44,8 @@ export class MigrationService {
         objectifCaHt: affaire.objectifCaHt,
         objectifAchatHt: affaire.objectifAchatHt,
         objectifHeuresFab: affaire.objectifHeuresFab,
-        ser: affaire.ser,
-        pose: affaire.pose,
+        objectifHeuresSer: affaire.objectifHeuresSer,
+        objectifHeuresPose: affaire.objectifHeuresPose,
         statut: affaire.statut,
       });
     });

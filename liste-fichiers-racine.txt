@@ -1,0 +1,21 @@
+drwx--x--x   18 cexe9174   cexe9174         4096 Jun 20 14:23 .
+drwx--x--x   18 cexe9174   cexe9174         4096 Jun 20 14:23 ..
+drwxrwx--x    5 cexe9174   cexe9174         4096 Apr  9 13:50 .cagefs
+drwxr-xr-x    2 cexe9174   cexe9174         4096 Jun  4 06:06 .cl.selector
+drwx------    6 cexe9174   cexe9174         4096 Jun 20 14:11 .cpanel
+drwxr-x---    2 cexe9174   cexe9174         4096 Mar 20 07:07 .htpasswds
+-rw-r--r--    1 cexe9174   cexe9174          106 Apr 17 04:45 .imunify_patch_id
+drwxr-xr-x    2 cexe9174   cexe9174         4096 Apr  1 06:20 .koality
+-rw-------    1 cexe9174   cexe9174          341 Jun 20 14:11 .lastlogin
+-rw-r--r--    1 cexe9174   cexe9174          102 Mar 17 04:40 .myimunify_id
+drwx--x--x    2 cexe9174   cexe9174         4096 Apr  1 06:20 .sitepad
+drwx--x--x    5 cexe9174   cexe9174         4096 Jun 20 14:04 .softaculous
+drwx------    2 cexe9174   cexe9174         4096 Jun 20 14:04 .trash
+drwxrwx--x   13 cexe9174   cexe9174         4096 May  3 21:45 Copie site
+drwxr-xr-x    9 cexe9174   cexe9174         4096 Jun 20 14:28 backup_20250620_142332
+drwxr-xr-x    2 cexe9174   cexe9174         4096 Jun 20 14:13 entreprise-organiser
+drwx------    2 cexe9174   cexe9174         4096 Jun 16 00:17 logs
+drwx------    5 cexe9174   cexe9174         4096 Jun 20 14:01 mail
+drwxr-x---    5 cexe9174   65534            4096 Jun 20 14:29 public_html
+drwxr-xr-x    5 cexe9174   cexe9174         4096 Jun 10 20:03 ssl
+drwxr-xr-x    6 cexe9174   cexe9174         4096 Apr  2 00:08 tmp

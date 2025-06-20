@@ -1,17 +1,12 @@
 // Export de tous les composants UI
-export * from './Button';
-export * from './Card';
-export * from './StatCard';
-export * from './ChartCard';
-export * from './badge';
-export * from './checkbox';
-export * from './dropdown-menu';
-export * from './input';
-export * from './label';
-export * from './select';
-export * from './switch';
-export * from './tabs';
-export * from './textarea';
-export * from './dialog';
-export * from './popover';
-export * from './calendar'; 
+export { default as Button } from './button.jsx';
+export { Card, CardHeader, CardTitle, CardContent } from './card.jsx';
+export { default as Input } from './input.jsx';
+export { default as Label } from './label.jsx';
+export { default as Badge } from './badge.jsx';
+export { default as Textarea } from './textarea.jsx';
+export { default as Select } from './select.jsx';
+export { default as Checkbox } from './checkbox.jsx';
+export { default as Switch } from './switch.jsx';
+export { default as StatCard } from './StatCard.jsx';
+export { default as ChartCard } from './ChartCard.jsx';
